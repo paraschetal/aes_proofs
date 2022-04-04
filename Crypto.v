@@ -1302,6 +1302,7 @@ Definition sub_word (w:word) : word :=
 Definition rcon_word (i: round) (w: word): word :=
   xor_words w (rcon i)
 .
+
 (*
 Program Fixpoint wi (k:key_t) (i: iw) : word :=
   match i with
@@ -1416,8 +1417,7 @@ Program Fixpoint wi (k:key_t) (i: nat) (i_bound: i <= 43) : word :=
   | 43 |_ => xor_words (wi k 42) (wi k 39)
   end.
 
- *)
-
+*)
 Definition shift_rows (s: state) : state :=
   match s with
   | bytes16 r0c0 r0c1 r0c2 r0c3
@@ -1448,6 +1448,52 @@ Proof.
   - simpl. reflexivity.
 Qed.
 
-    
+Definition sub_bytes (s: state) : state :=
+  match s with
+  | bytes16 r0c0 r0c1 r0c2 r0c3
+            r1c0 r1c1 r1c2 r1c3
+            r2c0 r2c1 r2c2 r2c3
+            r3c0 r3c1 r3c2 r3c3 => bytes16 (s_box r0c0) (s_box r0c1) (s_box r0c2) (s_box r0c3)
+                                           (s_box r1c0) (s_box r1c1) (s_box r1c2) (s_box r1c3)
+                                           (s_box r2c0) (s_box r2c1) (s_box r2c2) (s_box r2c3)
+                                           (s_box r3c0) (s_box r3c1) (s_box r3c2) (s_box r3c3)
+  end.
+
+Definition inv_sub_bytes (s: state) : state :=
+  match s with
+  | bytes16 r0c0 r0c1 r0c2 r0c3
+            r1c0 r1c1 r1c2 r1c3
+            r2c0 r2c1 r2c2 r2c3
+            r3c0 r3c1 r3c2 r3c3 => bytes16 (inv_s_box r0c0) (inv_s_box r0c1) (inv_s_box r0c2) (inv_s_box r0c3)
+                                           (inv_s_box r1c0) (inv_s_box r1c1) (inv_s_box r1c2) (inv_s_box r1c3)
+                                           (inv_s_box r2c0) (inv_s_box r2c1) (inv_s_box r2c2) (inv_s_box r2c3)
+                                           (inv_s_box r3c0) (inv_s_box r3c1) (inv_s_box r3c2) (inv_s_box r3c3)
+  end.
+
+Theorem sbytes_inv_sbytes: forall s: state,
+    inv_sub_bytes (sub_bytes (s)) = s.
+Proof.
+  intros s.
+  destruct s.
+  - simpl.
+    rewrite sbox_inv_sbox.
+    rewrite sbox_inv_sbox.
+    rewrite sbox_inv_sbox.
+    rewrite sbox_inv_sbox.
+    rewrite sbox_inv_sbox.
+    rewrite sbox_inv_sbox.
+    rewrite sbox_inv_sbox.
+    rewrite sbox_inv_sbox.
+    rewrite sbox_inv_sbox.
+    rewrite sbox_inv_sbox.
+    rewrite sbox_inv_sbox.
+    rewrite sbox_inv_sbox.
+    rewrite sbox_inv_sbox.
+    rewrite sbox_inv_sbox.
+    rewrite sbox_inv_sbox.
+    rewrite sbox_inv_sbox.
+    reflexivity.
+Qed.
+
 
 
