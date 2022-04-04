@@ -56,7 +56,7 @@ Inductive qword: Type :=
 .
 
 
-Inductive matrix : Type :=
+Inductive state : Type :=
 | bytes16 (r0c0 r0c1 r0c2 r0c3
            r1c0 r1c1 r1c2 r1c3
            r2c0 r2c1 r2c2 r2c3
@@ -1303,7 +1303,7 @@ Definition rcon_word (i: round) (w: word): word :=
   xor_words w (rcon i)
 .
 (*
-Fixpoint wi (k:key_t) (i: iw) : word :=
+Program Fixpoint wi (k:key_t) (i: iw) : word :=
   match i with
   | i0 => match k with
           | kwords w0 _ _ _ => w0
@@ -1360,7 +1360,7 @@ Fixpoint wi (k:key_t) (i: iw) : word :=
   end.
 *)
 (*
-Fixpoint wi (k:key_t) (i: nat) : word :=
+Program Fixpoint wi (k:key_t) (i: nat) (i_bound: i <= 43) : word :=
   match i with
   | 0 => match k with
           | kwords w0 _ _ _ => w0
@@ -1413,7 +1413,36 @@ Fixpoint wi (k:key_t) (i: nat) : word :=
   | 40 => rcon_word r10 (sub_word (rot_word (wi k 39)))
   | 41 => xor_words (wi k 40) (wi k 37)
   | 42 => xor_words (wi k 41) (wi k 38)
-  | 43 => xor_words (wi k 42) (wi k 39)
-  | _ => xor_words (wi k 42) (wi k 39)
+  | 43 |_ => xor_words (wi k 42) (wi k 39)
   end.
-*)
+
+ *)
+
+Definition shift_rows (s: state) : state :=
+  match s with
+  | bytes16 r0c0 r0c1 r0c2 r0c3
+            r1c0 r1c1 r1c2 r1c3
+            r2c0 r2c1 r2c2 r2c3
+            r3c0 r3c1 r3c2 r3c3 => bytes16 r0c0 r0c1 r0c2 r0c3
+                                           r1c1 r1c2 r1c3 r1c0
+                                           r2c2 r2c3 r2c0 r2c1
+                                           r3c3 r3c0 r3c1 r3c2
+  end.
+
+Definition inv_shift_rows (s: state) : state :=
+  match s with
+  | bytes16 r0c0 r0c1 r0c2 r0c3
+            r1c0 r1c1 r1c2 r1c3
+            r2c0 r2c1 r2c2 r2c3
+            r3c0 r3c1 r3c2 r3c3 => bytes16 r0c0 r0c1 r0c2 r0c3
+                                           r1c3 r1c0 r1c1 r1c2
+                                           r2c2 r2c3 r2c0 r2c1
+                                           r3c1 r3c2 r3c3 r3c0
+  end.
+
+Theorem srows_inv_srows: forall s: state,
+    inv_shift_rows (shift_rows (s)) = s.
+Proof.
+Admitted.
+
+
