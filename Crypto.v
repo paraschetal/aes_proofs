@@ -1,17 +1,17 @@
 (*Require Import Coq.Init.Byte.*)
 Require Import Program.
 Require Import Nat.
-Inductive binary : Type :=
+Inductive bit : Type :=
 | s0
 | s1
 .
 
 Inductive nibble: Type :=
-| bits4 (b0 b1 b2 b3: binary)
+| bits4 (b0 b1 b2 b3: bit)
 .
 
 Inductive byte : Type :=
-| bits8 (b0 b1 b2 b3 b4 b5 b6 b7 : binary)
+| bits8 (b0 b1 b2 b3 b4 b5 b6 b7 : bit)
 .
 
 Definition ms_nibble (b:byte) : nibble :=
@@ -25,7 +25,7 @@ Definition ls_nibble (b:byte) : nibble :=
   end.
 
 
-Definition xor_bits (b1 b2: binary) : binary :=
+Definition xor_bits (b1 b2: bit) : bit :=
   match b1 with
   | s0 => match b2 with
           | s0 => s0
@@ -52,7 +52,7 @@ Inductive word : Type :=
 .
 
 Inductive qword: Type :=
-| word8 (w0 w1 w2 w3: word)
+| words4 (w0 w1 w2 w3: word)
 .
 
 
@@ -1197,11 +1197,7 @@ Proof.
                 ********* reflexivity.
                 ********* reflexivity.
 Qed.
-
-Inductive key_t :=
-  kwords (w0 w1 w2 w3: word)
-.
-
+(*
 
 Inductive round :=
 | r1
@@ -1418,6 +1414,8 @@ Program Fixpoint wi (k:key_t) (i: nat) (i_bound: i <= 43) : word :=
   end.
 
 *)
+
+*)
 Definition shift_rows (s: state) : state :=
   match s with
   | bytes16 r0c0 r0c1 r0c2 r0c3
@@ -1495,5 +1493,103 @@ Proof.
     reflexivity.
 Qed.
 
+(*TODO: mix_columns, inv_mix_columns, mc_inv_mc*)
+Definition mix_columns (s: state) : state :=
+  s.
 
+Definition inv_mix_columns (s: state) : state :=
+  s.
+
+Theorem mc_inv_mc: forall s: state,
+    inv_mix_columns (mix_columns (s)) = s.
+Proof.
+Admitted.
+
+(*TODO: round keys*)
+
+Definition zb: byte :=
+  bits8 s0 s0 s0 s0 s0 s0 s0 s0
+.
+
+Definition starkey: state :=
+  bytes16 zb zb zb zb
+          zb zb zb zb
+          zb zb zb zb
+          zb zb zb zb
+.
+
+
+Definition add_round_key (k: state) (s: state) :=
+  match k with
+  | bytes16 k00 k01 k02 k03
+            k10 k11 k12 k13
+            k20 k21 k22 k23
+            k30 k31 k32 k33 =>
+      match s with
+      | bytes16 s00 s01 s02 s03
+                s10 s11 s12 s13
+                s20 s21 s22 s23
+                s30 s31 s32 s33 =>
+          bytes16 (xor_bytes k00 s00) (xor_bytes k01 s01) (xor_bytes k02 s02) (xor_bytes k03 s03)
+                  (xor_bytes k10 s10) (xor_bytes k11 s11) (xor_bytes k12 s12) (xor_bytes k13 s13)
+                  (xor_bytes k20 s20) (xor_bytes k21 s21) (xor_bytes k22 s22) (xor_bytes k23 s23)
+                  (xor_bytes k30 s30) (xor_bytes k31 s31) (xor_bytes k32 s32) (xor_bytes k33 s33)
+      end
+  end.
+
+Theorem xor_xor_bit: forall b' b: bit,
+    xor_bits b' (xor_bits b' b) = b.
+Proof.
+  intros b' b.
+  destruct b.
+  - destruct b'.
+    + reflexivity.
+    + reflexivity.
+  - destruct b'.
+    + reflexivity.
+    + reflexivity.
+Qed.
+
+Theorem xor_xor_byte: forall b' b: byte,
+    xor_bytes b' (xor_bytes b' b) = b.
+Proof.
+  intros b' b.
+  destruct b'.
+  destruct b.
+  simpl.
+  rewrite xor_xor_bit.
+  rewrite xor_xor_bit.
+  rewrite xor_xor_bit.
+  rewrite xor_xor_bit.
+  rewrite xor_xor_bit.
+  rewrite xor_xor_bit.
+  rewrite xor_xor_bit.
+  rewrite xor_xor_bit.
+  reflexivity.
+Qed.
+
+Theorem xor_xor_state: forall s' s: state,
+    add_round_key s' (add_round_key s' s) = s.
+Proof.
+  intros s' s.
+  destruct s'. destruct s.
+  simpl.
+  rewrite xor_xor_byte.
+  rewrite xor_xor_byte.
+  rewrite xor_xor_byte.
+  rewrite xor_xor_byte.
+  rewrite xor_xor_byte.
+  rewrite xor_xor_byte.
+  rewrite xor_xor_byte.
+  rewrite xor_xor_byte.
+  rewrite xor_xor_byte.
+  rewrite xor_xor_byte.
+  rewrite xor_xor_byte.
+  rewrite xor_xor_byte.
+  rewrite xor_xor_byte.
+  rewrite xor_xor_byte.
+  rewrite xor_xor_byte.
+  rewrite xor_xor_byte.
+  reflexivity.
+Qed.
 
