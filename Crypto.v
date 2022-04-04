@@ -1443,6 +1443,11 @@ Definition inv_shift_rows (s: state) : state :=
 Theorem srows_inv_srows: forall s: state,
     inv_shift_rows (shift_rows (s)) = s.
 Proof.
-Admitted.
+  intros s.
+  destruct s.
+  - simpl. reflexivity.
+Qed.
+
+    
 
 
