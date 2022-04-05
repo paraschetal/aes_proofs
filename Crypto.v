@@ -56,7 +56,7 @@ Inductive qword: Type :=
 .
 
 
-Inductive state : Type :=
+Inductive matrix : Type :=
 | bytes16 (r0c0 r0c1 r0c2 r0c3
            r1c0 r1c1 r1c2 r1c3
            r2c0 r2c1 r2c2 r2c3
@@ -1416,8 +1416,8 @@ Program Fixpoint wi (k:key_t) (i: nat) (i_bound: i <= 43) : word :=
 *)
 
 *)
-Definition shift_rows (s: state) : state :=
-  match s with
+Definition shift_rows (state: matrix) : matrix :=
+  match state with
   | bytes16 r0c0 r0c1 r0c2 r0c3
             r1c0 r1c1 r1c2 r1c3
             r2c0 r2c1 r2c2 r2c3
@@ -1427,8 +1427,8 @@ Definition shift_rows (s: state) : state :=
                                            r3c3 r3c0 r3c1 r3c2
   end.
 
-Definition inv_shift_rows (s: state) : state :=
-  match s with
+Definition inv_shift_rows (state: matrix) : matrix :=
+  match state with
   | bytes16 r0c0 r0c1 r0c2 r0c3
             r1c0 r1c1 r1c2 r1c3
             r2c0 r2c1 r2c2 r2c3
@@ -1438,16 +1438,16 @@ Definition inv_shift_rows (s: state) : state :=
                                            r3c1 r3c2 r3c3 r3c0
   end.
 
-Theorem srows_inv_srows: forall s: state,
-    inv_shift_rows (shift_rows (s)) = s.
+Theorem srows_inv_srows: forall state: matrix,
+    inv_shift_rows (shift_rows (state)) = state.
 Proof.
   intros s.
   destruct s.
   - simpl. reflexivity.
 Qed.
 
-Definition sub_bytes (s: state) : state :=
-  match s with
+Definition sub_bytes (state: matrix) : matrix :=
+  match state with
   | bytes16 r0c0 r0c1 r0c2 r0c3
             r1c0 r1c1 r1c2 r1c3
             r2c0 r2c1 r2c2 r2c3
@@ -1457,8 +1457,8 @@ Definition sub_bytes (s: state) : state :=
                                            (s_box r3c0) (s_box r3c1) (s_box r3c2) (s_box r3c3)
   end.
 
-Definition inv_sub_bytes (s: state) : state :=
-  match s with
+Definition inv_sub_bytes (state: matrix) : matrix :=
+  match state with
   | bytes16 r0c0 r0c1 r0c2 r0c3
             r1c0 r1c1 r1c2 r1c3
             r2c0 r2c1 r2c2 r2c3
@@ -1468,8 +1468,8 @@ Definition inv_sub_bytes (s: state) : state :=
                                            (inv_s_box r3c0) (inv_s_box r3c1) (inv_s_box r3c2) (inv_s_box r3c3)
   end.
 
-Theorem sbytes_inv_sbytes: forall s: state,
-    inv_sub_bytes (sub_bytes (s)) = s.
+Theorem sbytes_inv_sbytes: forall state: matrix,
+    inv_sub_bytes (sub_bytes (state)) = state.
 Proof.
   intros s.
   destruct s.
@@ -1494,14 +1494,14 @@ Proof.
 Qed.
 
 (*TODO: mix_columns, inv_mix_columns, mc_inv_mc*)
-Definition mix_columns (s: state) : state :=
-  s.
+Definition mix_columns (state: matrix) : matrix :=
+  state.
 
-Definition inv_mix_columns (s: state) : state :=
-  s.
+Definition inv_mix_columns (state: matrix) : matrix :=
+  state.
 
-Theorem mc_inv_mc: forall s: state,
-    inv_mix_columns (mix_columns (s)) = s.
+Theorem mc_inv_mc: forall state: matrix,
+    inv_mix_columns (mix_columns (state)) = state.
 Proof.
 Admitted.
 
@@ -1511,7 +1511,8 @@ Definition zb: byte :=
   bits8 s0 s0 s0 s0 s0 s0 s0 s0
 .
 
-Definition starkey: state :=
+
+Definition starkey: matrix :=
   bytes16 zb zb zb zb
           zb zb zb zb
           zb zb zb zb
@@ -1519,13 +1520,13 @@ Definition starkey: state :=
 .
 
 
-Definition add_round_key (k: state) (s: state) :=
-  match k with
+Definition add_round_key (key: matrix) (state: matrix) :=
+  match key with
   | bytes16 k00 k01 k02 k03
             k10 k11 k12 k13
             k20 k21 k22 k23
             k30 k31 k32 k33 =>
-      match s with
+      match state with
       | bytes16 s00 s01 s02 s03
                 s10 s11 s12 s13
                 s20 s21 s22 s23
@@ -1568,8 +1569,8 @@ Proof.
   reflexivity.
 Qed.
 
-Theorem xor_xor_state: forall s' s: state,
-    add_round_key s' (add_round_key s' s) = s.
+Theorem xor_xor_matrix: forall state state': matrix,
+    add_round_key state' (add_round_key state' state) = state.
 Proof.
   intros s' s.
   destruct s'. destruct s.
@@ -1637,162 +1638,190 @@ Definition key10 :=
   starkey
 .
 
-Definition enc_round1 (s: state) : state :=
+Definition enc_round1 (s: matrix) : matrix :=
   add_round_key key1 (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round2 (s: state) : state :=
+Definition enc_round2 (s: matrix) : matrix :=
   add_round_key key2 (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round3 (s: state) : state :=
+Definition enc_round3 (s: matrix) : matrix :=
   add_round_key key3 (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round4 (s: state) : state :=
+Definition enc_round4 (s: matrix) : matrix :=
   add_round_key key4 (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round5 (s: state) : state :=
+Definition enc_round5 (s: matrix) : matrix :=
   add_round_key key5 (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round6 (s: state) : state :=
+Definition enc_round6 (s: matrix) : matrix :=
   add_round_key key6 (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round7 (s: state) : state :=
+Definition enc_round7 (s: matrix) : matrix :=
   add_round_key key7 (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round8 (s: state) : state :=
+Definition enc_round8 (s: matrix) : matrix :=
   add_round_key key8 (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round9 (s: state) : state :=
+Definition enc_round9 (s: matrix) : matrix :=
   add_round_key key9 (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round10 (s: state) : state :=
+Definition enc_round10 (s: matrix) : matrix :=
   add_round_key key10 ((shift_rows (sub_bytes (s))))
 .
 
-Definition encryption (m: state) : state :=
+Definition enc_aes (k m: matrix) : matrix :=
   enc_round10 (enc_round9 (enc_round8 (enc_round7 (enc_round6 (enc_round5
   (enc_round4 (enc_round3 (enc_round2 (enc_round1 (add_round_key key0 m)))))))))) 
 .
 
-Definition dec_round1 (s: state) : state :=
+Definition dec_round1 (s: matrix) : matrix :=
   inv_mix_columns (add_round_key key9 (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round2 (s: state) : state :=
+Definition dec_round2 (s: matrix) : matrix :=
   inv_mix_columns (add_round_key key8 (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round3 (s: state) : state :=
+Definition dec_round3 (s: matrix) : matrix :=
   inv_mix_columns (add_round_key key7 (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round4 (s: state) : state :=
+Definition dec_round4 (s: matrix) : matrix :=
   inv_mix_columns (add_round_key key6 (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round5 (s: state) : state :=
+Definition dec_round5 (s: matrix) : matrix :=
   inv_mix_columns (add_round_key key5 (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round6 (s: state) : state :=
+Definition dec_round6 (s: matrix) : matrix :=
   inv_mix_columns (add_round_key key4 (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round7 (s: state) : state :=
+Definition dec_round7 (s: matrix) : matrix :=
   inv_mix_columns (add_round_key key3 (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round8 (s: state) : state :=
+Definition dec_round8 (s: matrix) : matrix :=
   inv_mix_columns (add_round_key key2 (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round9 (s: state) : state :=
+Definition dec_round9 (s: matrix) : matrix :=
   inv_mix_columns (add_round_key key1 (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round10 (s: state) : state :=
+Definition dec_round10 (s: matrix) : matrix :=
   add_round_key key0 (inv_sub_bytes (inv_shift_rows (s)))
 .
 
-Definition decryption (c: state) : state :=
+Definition dec_aes (k c: matrix) : matrix :=
   dec_round10 (dec_round9 (dec_round8 (dec_round7 (dec_round6 (dec_round5
   (dec_round4 (dec_round3 (dec_round2 (dec_round1 (add_round_key key10 c))))))))))
 .
 
-Theorem aes_correctness: forall m: state,
-    decryption (encryption (m)) = m.
+Theorem aes_correctness: forall k: matrix, forall m: matrix,
+    dec_aes k (enc_aes k m) = m.
 Proof.
-  intros m.
-  unfold encryption.
-  unfold decryption.
+  intros k m.
+  unfold enc_aes.
+  unfold dec_aes.
   unfold enc_round10.
-  rewrite xor_xor_state.
+  rewrite xor_xor_matrix.
   unfold dec_round1.
   rewrite srows_inv_srows.
   rewrite sbytes_inv_sbytes.
   unfold enc_round9.
-  rewrite xor_xor_state.
+  rewrite xor_xor_matrix.
   rewrite mc_inv_mc.
   unfold dec_round2.
   rewrite srows_inv_srows.
   rewrite sbytes_inv_sbytes.
   unfold enc_round8.
-  rewrite xor_xor_state.
+  rewrite xor_xor_matrix.
   rewrite mc_inv_mc.
   unfold dec_round3.
   rewrite srows_inv_srows.
   rewrite sbytes_inv_sbytes.
   unfold enc_round7.
-  rewrite xor_xor_state.
+  rewrite xor_xor_matrix.
   rewrite mc_inv_mc.
   unfold dec_round4.
   rewrite srows_inv_srows.
   rewrite sbytes_inv_sbytes.
   unfold enc_round6.
-  rewrite xor_xor_state.
+  rewrite xor_xor_matrix.
   rewrite mc_inv_mc.
   unfold dec_round5.
   rewrite srows_inv_srows.
   rewrite sbytes_inv_sbytes.
   unfold enc_round5.
-  rewrite xor_xor_state.
+  rewrite xor_xor_matrix.
   rewrite mc_inv_mc.
   unfold dec_round6.
   rewrite srows_inv_srows.
   rewrite sbytes_inv_sbytes.
   unfold enc_round4.
-  rewrite xor_xor_state.
+  rewrite xor_xor_matrix.
   rewrite mc_inv_mc.
   unfold dec_round7.
   rewrite srows_inv_srows.
   rewrite sbytes_inv_sbytes.
   unfold enc_round3.
-  rewrite xor_xor_state.
+  rewrite xor_xor_matrix.
   rewrite mc_inv_mc.
   unfold dec_round8.
   rewrite srows_inv_srows.
   rewrite sbytes_inv_sbytes.
   unfold enc_round2.
-  rewrite xor_xor_state.
+  rewrite xor_xor_matrix.
   rewrite mc_inv_mc.
   unfold dec_round9.
   rewrite srows_inv_srows.
   rewrite sbytes_inv_sbytes.
   unfold enc_round1.
-  rewrite xor_xor_state.
+  rewrite xor_xor_matrix.
   rewrite mc_inv_mc.
   unfold dec_round10.
   rewrite srows_inv_srows.
   rewrite sbytes_inv_sbytes.
-  rewrite xor_xor_state.
+  rewrite xor_xor_matrix.
   reflexivity.
 Qed.
 
+Inductive blocks :=
+| B0 (s: matrix)
+| BS (s: matrix) (b: blocks)
+.
+
+Fixpoint enc_aes_ecb (key: matrix) (message: blocks):  blocks:=
+  match message with
+  | B0 s => B0 (enc_aes key s)
+  | BS s b => BS (enc_aes key s) (enc_aes_ecb key b)
+  end.
+
+Fixpoint dec_aes_ecb (key: matrix) (ciphertext: blocks): blocks :=
+  match ciphertext with
+  | B0 s => B0 (dec_aes key s)
+  | BS s b => BS (dec_aes key s) (dec_aes_ecb key b)
+  end.
+
+Theorem aes_ecb_correctness: forall key: matrix, forall message: blocks,
+    dec_aes_ecb key (enc_aes_ecb key message) = message.
+Proof.
+  intros k m.
+  induction m as [|ms mb Hm].
+  - simpl. rewrite aes_correctness. reflexivity.
+  - simpl. rewrite Hm. rewrite aes_correctness.
+    reflexivity.
+Qed.
+
+    
