@@ -1593,3 +1593,141 @@ Proof.
   reflexivity.
 Qed.
 
+Definition key0 :=
+  starkey
+.
+
+Definition key1 :=
+  starkey
+.
+
+Definition key2 :=
+  starkey
+.
+
+Definition key3 :=
+  starkey
+.
+
+Definition key4 :=
+  starkey
+.
+
+Definition key5 :=
+  starkey
+.
+
+Definition key6 :=
+  starkey
+.
+
+Definition key7 :=
+  starkey
+.
+
+Definition key8 :=
+  starkey
+.
+
+Definition key9 :=
+  starkey
+.
+
+Definition key10 :=
+  starkey
+.
+
+Definition enc_round1 (s: state) : state :=
+  add_round_key key1 (mix_columns (shift_rows (sub_bytes (s))))
+.
+
+Definition enc_round2 (s: state) : state :=
+  add_round_key key2 (mix_columns (shift_rows (sub_bytes (s))))
+.
+
+Definition enc_round3 (s: state) : state :=
+  add_round_key key3 (mix_columns (shift_rows (sub_bytes (s))))
+.
+
+Definition enc_round4 (s: state) : state :=
+  add_round_key key4 (mix_columns (shift_rows (sub_bytes (s))))
+.
+
+Definition enc_round5 (s: state) : state :=
+  add_round_key key5 (mix_columns (shift_rows (sub_bytes (s))))
+.
+
+Definition enc_round6 (s: state) : state :=
+  add_round_key key6 (mix_columns (shift_rows (sub_bytes (s))))
+.
+
+Definition enc_round7 (s: state) : state :=
+  add_round_key key7 (mix_columns (shift_rows (sub_bytes (s))))
+.
+
+Definition enc_round8 (s: state) : state :=
+  add_round_key key8 (mix_columns (shift_rows (sub_bytes (s))))
+.
+
+Definition enc_round9 (s: state) : state :=
+  add_round_key key9 (mix_columns (shift_rows (sub_bytes (s))))
+.
+
+Definition enc_round10 (s: state) : state :=
+  add_round_key key10 (mix_columns (shift_rows (sub_bytes (s))))
+.
+
+Definition encryption (m: state) : state :=
+  enc_round10 (enc_round9 (enc_round8 (enc_round7 (enc_round6 (enc_round5
+  (enc_round4 (enc_round3 (enc_round2 (enc_round1 (add_round_key key0 m)))))))))) 
+.
+
+Definition dec_round1 (s: state) : state :=
+  inv_mix_columns (add_round_key key9 (inv_sub_bytes (inv_shift_rows (s))))
+.
+
+Definition dec_round2 (s: state) : state :=
+  inv_mix_columns (add_round_key key8 (inv_sub_bytes (inv_shift_rows (s))))
+.
+
+Definition dec_round3 (s: state) : state :=
+  inv_mix_columns (add_round_key key7 (inv_sub_bytes (inv_shift_rows (s))))
+.
+
+Definition dec_round4 (s: state) : state :=
+  inv_mix_columns (add_round_key key6 (inv_sub_bytes (inv_shift_rows (s))))
+.
+
+Definition dec_round5 (s: state) : state :=
+  inv_mix_columns (add_round_key key5 (inv_sub_bytes (inv_shift_rows (s))))
+.
+
+Definition dec_round6 (s: state) : state :=
+  inv_mix_columns (add_round_key key4 (inv_sub_bytes (inv_shift_rows (s))))
+.
+
+Definition dec_round7 (s: state) : state :=
+  inv_mix_columns (add_round_key key3 (inv_sub_bytes (inv_shift_rows (s))))
+.
+
+Definition dec_round8 (s: state) : state :=
+  inv_mix_columns (add_round_key key2 (inv_sub_bytes (inv_shift_rows (s))))
+.
+
+Definition dec_round9 (s: state) : state :=
+  inv_mix_columns (add_round_key key1 (inv_sub_bytes (inv_shift_rows (s))))
+.
+
+Definition dec_round10 (s: state) : state :=
+  inv_mix_columns (add_round_key key0 (inv_sub_bytes (inv_shift_rows (s))))
+.
+
+Definition decryption (c: state) : state :=
+  dec_round10 (dec_round9 (dec_round8 (dec_round7 (dec_round6 (dec_round5
+  (dec_round4 (dec_round3 (dec_round2 (dec_round1 (add_round_key key10 c))))))))))
+.
+
+Theorem aes_correctness: forall m: state,
+    decryption (encryption (m)) = m.
+Proof.
+Admitted.
