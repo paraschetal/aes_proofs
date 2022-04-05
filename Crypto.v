@@ -1674,7 +1674,7 @@ Definition enc_round9 (s: state) : state :=
 .
 
 Definition enc_round10 (s: state) : state :=
-  add_round_key key10 (mix_columns (shift_rows (sub_bytes (s))))
+  add_round_key key10 ((shift_rows (sub_bytes (s))))
 .
 
 Definition encryption (m: state) : state :=
@@ -1719,7 +1719,7 @@ Definition dec_round9 (s: state) : state :=
 .
 
 Definition dec_round10 (s: state) : state :=
-  inv_mix_columns (add_round_key key0 (inv_sub_bytes (inv_shift_rows (s))))
+  add_round_key key0 (inv_sub_bytes (inv_shift_rows (s)))
 .
 
 Definition decryption (c: state) : state :=
@@ -1730,4 +1730,69 @@ Definition decryption (c: state) : state :=
 Theorem aes_correctness: forall m: state,
     decryption (encryption (m)) = m.
 Proof.
-Admitted.
+  intros m.
+  unfold encryption.
+  unfold decryption.
+  unfold enc_round10.
+  rewrite xor_xor_state.
+  unfold dec_round1.
+  rewrite srows_inv_srows.
+  rewrite sbytes_inv_sbytes.
+  unfold enc_round9.
+  rewrite xor_xor_state.
+  rewrite mc_inv_mc.
+  unfold dec_round2.
+  rewrite srows_inv_srows.
+  rewrite sbytes_inv_sbytes.
+  unfold enc_round8.
+  rewrite xor_xor_state.
+  rewrite mc_inv_mc.
+  unfold dec_round3.
+  rewrite srows_inv_srows.
+  rewrite sbytes_inv_sbytes.
+  unfold enc_round7.
+  rewrite xor_xor_state.
+  rewrite mc_inv_mc.
+  unfold dec_round4.
+  rewrite srows_inv_srows.
+  rewrite sbytes_inv_sbytes.
+  unfold enc_round6.
+  rewrite xor_xor_state.
+  rewrite mc_inv_mc.
+  unfold dec_round5.
+  rewrite srows_inv_srows.
+  rewrite sbytes_inv_sbytes.
+  unfold enc_round5.
+  rewrite xor_xor_state.
+  rewrite mc_inv_mc.
+  unfold dec_round6.
+  rewrite srows_inv_srows.
+  rewrite sbytes_inv_sbytes.
+  unfold enc_round4.
+  rewrite xor_xor_state.
+  rewrite mc_inv_mc.
+  unfold dec_round7.
+  rewrite srows_inv_srows.
+  rewrite sbytes_inv_sbytes.
+  unfold enc_round3.
+  rewrite xor_xor_state.
+  rewrite mc_inv_mc.
+  unfold dec_round8.
+  rewrite srows_inv_srows.
+  rewrite sbytes_inv_sbytes.
+  unfold enc_round2.
+  rewrite xor_xor_state.
+  rewrite mc_inv_mc.
+  unfold dec_round9.
+  rewrite srows_inv_srows.
+  rewrite sbytes_inv_sbytes.
+  unfold enc_round1.
+  rewrite xor_xor_state.
+  rewrite mc_inv_mc.
+  unfold dec_round10.
+  rewrite srows_inv_srows.
+  rewrite sbytes_inv_sbytes.
+  rewrite xor_xor_state.
+  reflexivity.
+Qed.
+
