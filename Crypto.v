@@ -385,12 +385,77 @@ Definition GF_mul_byte1 (a: byte) (b:bit) (shift:nat) : bit16 :=
         end
   end.
 
-(* Definition GF_mul_byte (a b: byte) : bytes :=
+
+
+
+Definition GF_mod2 (a : bit16) : byte :=
+  match a x16+or bits16 s0 s0 s0 s0 s0 s0 s0 s0 s0 s0 s0 s1 s1 s0 s1 s1 with
+  | bits16 _ _ _ _ _ _ _ _ b0 b1 b2 b3 b4 b5 b6 b7 => bits8 b0 b1 b2 b3 b4 b5 b6 b7
+end.
+
+Definition GF_shift_right (a : byte) : byte :=
+  match a with
+  | bits8 b0 b1 b2 b3 b4 b5 b6 b7 => bits8 s0 b0 b1 b2 b3 b4 b5 b6
+end.
+
+Definition GF_shift_left (a : bit16) : bit16 :=
+  match a with
+  | bits16 b0 b1 b2 b3 b4 b5 b6 b7 b8 b9 b10 b11 b12 b13 b14 b15 => bits16 b1 b2 b3 b4 b5 b6 b7 b8 b9 b10 b11 b12 b13 b14 b15 s0
+end.
+
+ Definition GF_mod_xor (a : bit16) (b : byte) : bit16 :=
+match a, b with
+| bits16 a0 a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13 a14 a15, bits8 b0 b1 b2 b3 b4 b5 b6 b7 => 
+  bits16 a0 a1 a2 a3 a4 a5 a6 a7 (xor_bits a8 b0) (xor_bits a9 b1) (xor_bits a10 b2) (xor_bits a11 b3) (xor_bits a12 b4) (xor_bits a13 b5) (xor_bits a14 b6) (xor_bits a15 b7)
+end. 
+
+Definition truncate_bit16 (a : bit16) : byte :=
+match a with
+| bits16 a8 a9 a10 a11 a12 a13 a14 a15 a0 a1 a2 a3 a4 a5 a6 a7=> 
+  bits8 a0 a1 a2 a3 a4 a5 a6 a7
+end. 
+
+
+
+Fixpoint GF_mod_helper (a : bit16) (b : byte) (p : bit16) (round : nat): byte :=
+  match round with 
+  | 0 => truncate_bit16 p
+  | S n => match a, b with
+            | bits16 s0 s0 s0 s0 s0 s0 s0 s0 s0 s0 s0 s0 s0 s0 s0 s0, _ => truncate_bit16 p
+            | _, bits8 s0 s0 s0 s0 s0 s0 s0 s0 => truncate_bit16 p
+            | bits16 carry _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, bits8 _ _ _ _ _ _ _ b_last => 
+                      match b_last with (*If the rightmost bit of b is set, exclusive OR the product p by the value of a. This is polynomial addition.*)
+                      | s1 => (*(p= a x16+or p) (b>>1) (a << 1) (round --) *)
+                              match carry with 
+                              | s1 => GF_mod_helper (GF_mod_xor (GF_shift_left a) (bits8 s0 s0 s0 s1 s1 s0 s1 s1)) (GF_shift_right b) (a x16+or p) (n) 
+                              | _ => GF_mod_helper (GF_shift_left a) (GF_shift_right b) (a x16+or p) (n)
+                              end
+                      | _ => (*(b>>1) (a << 1) (round -) *)
+                              match carry with 
+                              | s1 => GF_mod_helper (GF_mod_xor (GF_shift_left a) (bits8 s0 s0 s0 s1 s1 s0 s1 s1)) (GF_shift_right b) (p) (n)
+                              | _ => GF_mod_helper (GF_shift_left a) (GF_shift_right b) (p) (n)
+                              end
+                      end
+            end
+end.
+
+Definition GF_mod (a: bit16) : byte :=
+  GF_mod_helper a (bits8 s0 s0 s0 s1 s1 s0 s1 s1) (bits16 s0 s0 s0 s0 s0 s0 s0 s0 s0 s0 s0 s0 s0 s0 s0 s0) (8).
+
+
+Definition GF_mul_byte (a b: byte) : byte :=
   match b with 
   | bits8 b7 b6 b5 b4 b3 b2 b1 b0 => 
-    ((GF_mul_byte1 a b7 7) x16+or (GF_mul_byte1 a b6 6) x16+or (GF_mul_byte1 a b5 5) x16+or (GF_mul_byte1 a b4 4) x16+or (GF_mul_byte1 a b3 3) x16+or(GF_mul_byte1 a b2 2) x16+or (GF_mul_byte1 a b1 1) x16+or (GF_mul_byte1 a b0 0))
+    GF_mod ((GF_mul_byte1 a b7 7) x16+or (GF_mul_byte1 a b6 6) x16+or (GF_mul_byte1 a b5 5) x16+or (GF_mul_byte1 a b4 4) x16+or (GF_mul_byte1 a b3 3) x16+or(GF_mul_byte1 a b2 2) x16+or (GF_mul_byte1 a b1 1) x16+or (GF_mul_byte1 a b0 0))
     end.
- *)
+
+Example test_GF_mul_byte: 
+(GF_mul_byte  (nat_to_byte 14)(nat_to_byte 8)) = 
+nat_to_byte 42.
+Proof.
+unfold nat_to_byte. unfold GF_mul_byte. simpl. unfold GF_mod. simpl. 
+Abort.
+ 
 (* https://en.wikipedia.org/wiki/Rijndael_MixColumns#Galois_Multiplication_lookup_tables*)
 
 Definition GF_mul_table (a : byte) (b : nat) : byte :=
@@ -424,7 +489,7 @@ Inductive qword: Type :=
 .
 
 
-Inductive matrix : Type :=
+Inductive state : Type :=
 | bytes16 (r0c0 r0c1 r0c2 r0c3
            r1c0 r1c1 r1c2 r1c3
            r2c0 r2c1 r2c2 r2c3
@@ -1784,8 +1849,8 @@ Program Fixpoint wi (k:key_t) (i: nat) (i_bound: i <= 43) : word :=
 *)
 
 *)
-Definition shift_rows (state: matrix) : matrix :=
-  match state with
+Definition shift_rows (s: state) : state :=
+  match s with
   | bytes16 r0c0 r0c1 r0c2 r0c3
             r1c0 r1c1 r1c2 r1c3
             r2c0 r2c1 r2c2 r2c3
@@ -1795,8 +1860,8 @@ Definition shift_rows (state: matrix) : matrix :=
                                            r3c3 r3c0 r3c1 r3c2
   end.
 
-Definition inv_shift_rows (state: matrix) : matrix :=
-  match state with
+Definition inv_shift_rows (s: state) : state :=
+  match s with
   | bytes16 r0c0 r0c1 r0c2 r0c3
             r1c0 r1c1 r1c2 r1c3
             r2c0 r2c1 r2c2 r2c3
@@ -1806,16 +1871,16 @@ Definition inv_shift_rows (state: matrix) : matrix :=
                                            r3c1 r3c2 r3c3 r3c0
   end.
 
-Theorem srows_inv_srows: forall state: matrix,
-    inv_shift_rows (shift_rows (state)) = state.
+Theorem srows_inv_srows: forall s: state,
+    inv_shift_rows (shift_rows (s)) = s.
 Proof.
   intros s.
   destruct s.
   - simpl. reflexivity.
 Qed.
 
-Definition sub_bytes (state: matrix) : matrix :=
-  match state with
+Definition sub_bytes (s: state) : state :=
+  match s with
   | bytes16 r0c0 r0c1 r0c2 r0c3
             r1c0 r1c1 r1c2 r1c3
             r2c0 r2c1 r2c2 r2c3
@@ -1825,8 +1890,8 @@ Definition sub_bytes (state: matrix) : matrix :=
                                            (s_box r3c0) (s_box r3c1) (s_box r3c2) (s_box r3c3)
   end.
 
-Definition inv_sub_bytes (state: matrix) : matrix :=
-  match state with
+Definition inv_sub_bytes (s: state) : state :=
+  match s with
   | bytes16 r0c0 r0c1 r0c2 r0c3
             r1c0 r1c1 r1c2 r1c3
             r2c0 r2c1 r2c2 r2c3
@@ -1836,8 +1901,8 @@ Definition inv_sub_bytes (state: matrix) : matrix :=
                                            (inv_s_box r3c0) (inv_s_box r3c1) (inv_s_box r3c2) (inv_s_box r3c3)
   end.
 
-Theorem sbytes_inv_sbytes: forall state: matrix,
-    inv_sub_bytes (sub_bytes (state)) = state.
+Theorem sbytes_inv_sbytes: forall s: state,
+    inv_sub_bytes (sub_bytes (s)) = s.
 Proof.
   intros s.
   destruct s.
@@ -2000,12 +2065,12 @@ destruct b22. destruct b23. destruct b24. destruct b25. destruct b26. destruct b
 destruct b21. destruct b22. destruct b23. destruct b24. destruct b25. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b25. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b24. destruct b25. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b25. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b23. destruct b24. destruct b25. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b25. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b24. destruct b25. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b25. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b22. destruct b23. destruct b24. destruct b25. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b25. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b24. destruct b25. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b25. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b23. destruct b24. destruct b25. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b25. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b24. destruct b25. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b25. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b26. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b27. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b28. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b29. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. destruct b30. destruct b31. reflexivity. reflexivity. destruct b31. reflexivity. reflexivity. 
 
 
-Admitted.
+Qed.
  
 
 
-Theorem mc_inv_mc: forall state: matrix,
-    inv_mix_columns (mix_columns (state)) = state.
+Theorem mc_inv_mc: forall s: state,
+    inv_mix_columns (mix_columns (s)) = s.
 Proof.
   intros s. unfold mix_columns. unfold inv_mix_columns. destruct s eqn:H0.
  destruct (mix_state_column (bytes4 r0c0 r1c0 r2c0 r3c0)) eqn:H1. destruct (mix_state_column (bytes4 r0c1 r1c1 r2c1 r3c1)) eqn:H2. destruct (mix_state_column (bytes4 r0c2 r1c2 r2c2 r3c2)) eqn:H3. destruct (mix_state_column (bytes4 r0c3 r1c3 r2c3 r3c3)) eqn:H4.
@@ -2018,8 +2083,7 @@ Definition zb: byte :=
   bits8 s0 s0 s0 s0 s0 s0 s0 s0
 .
 
-
-Definition starkey: matrix :=
+Definition starkey: state :=
   bytes16 zb zb zb zb
           zb zb zb zb
           zb zb zb zb
@@ -2027,13 +2091,13 @@ Definition starkey: matrix :=
 .
 
 
-Definition add_round_key (key: matrix) (state: matrix) :=
-  match key with
+Definition add_round_key (k: state) (s: state) :=
+  match k with
   | bytes16 k00 k01 k02 k03
             k10 k11 k12 k13
             k20 k21 k22 k23
             k30 k31 k32 k33 =>
-      match state with
+      match s with
       | bytes16 s00 s01 s02 s03
                 s10 s11 s12 s13
                 s20 s21 s22 s23
@@ -2076,8 +2140,8 @@ Proof.
   reflexivity.
 Qed.
 
-Theorem xor_xor_matrix: forall state state': matrix,
-    add_round_key state' (add_round_key state' state) = state.
+Theorem xor_xor_state: forall s' s: state,
+    add_round_key s' (add_round_key s' s) = s.
 Proof.
   intros s' s.
   destruct s'. destruct s.
@@ -2145,190 +2209,162 @@ Definition key10 :=
   starkey
 .
 
-Definition enc_round1 (s: matrix) : matrix :=
+Definition enc_round1 (s: state) : state :=
   add_round_key key1 (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round2 (s: matrix) : matrix :=
+Definition enc_round2 (s: state) : state :=
   add_round_key key2 (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round3 (s: matrix) : matrix :=
+Definition enc_round3 (s: state) : state :=
   add_round_key key3 (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round4 (s: matrix) : matrix :=
+Definition enc_round4 (s: state) : state :=
   add_round_key key4 (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round5 (s: matrix) : matrix :=
+Definition enc_round5 (s: state) : state :=
   add_round_key key5 (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round6 (s: matrix) : matrix :=
+Definition enc_round6 (s: state) : state :=
   add_round_key key6 (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round7 (s: matrix) : matrix :=
+Definition enc_round7 (s: state) : state :=
   add_round_key key7 (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round8 (s: matrix) : matrix :=
+Definition enc_round8 (s: state) : state :=
   add_round_key key8 (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round9 (s: matrix) : matrix :=
+Definition enc_round9 (s: state) : state :=
   add_round_key key9 (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round10 (s: matrix) : matrix :=
+Definition enc_round10 (s: state) : state :=
   add_round_key key10 ((shift_rows (sub_bytes (s))))
 .
 
-Definition enc_aes (k m: matrix) : matrix :=
+Definition encryption (m: state) : state :=
   enc_round10 (enc_round9 (enc_round8 (enc_round7 (enc_round6 (enc_round5
   (enc_round4 (enc_round3 (enc_round2 (enc_round1 (add_round_key key0 m)))))))))) 
 .
 
-Definition dec_round1 (s: matrix) : matrix :=
+Definition dec_round1 (s: state) : state :=
   inv_mix_columns (add_round_key key9 (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round2 (s: matrix) : matrix :=
+Definition dec_round2 (s: state) : state :=
   inv_mix_columns (add_round_key key8 (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round3 (s: matrix) : matrix :=
+Definition dec_round3 (s: state) : state :=
   inv_mix_columns (add_round_key key7 (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round4 (s: matrix) : matrix :=
+Definition dec_round4 (s: state) : state :=
   inv_mix_columns (add_round_key key6 (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round5 (s: matrix) : matrix :=
+Definition dec_round5 (s: state) : state :=
   inv_mix_columns (add_round_key key5 (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round6 (s: matrix) : matrix :=
+Definition dec_round6 (s: state) : state :=
   inv_mix_columns (add_round_key key4 (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round7 (s: matrix) : matrix :=
+Definition dec_round7 (s: state) : state :=
   inv_mix_columns (add_round_key key3 (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round8 (s: matrix) : matrix :=
+Definition dec_round8 (s: state) : state :=
   inv_mix_columns (add_round_key key2 (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round9 (s: matrix) : matrix :=
+Definition dec_round9 (s: state) : state :=
   inv_mix_columns (add_round_key key1 (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round10 (s: matrix) : matrix :=
+Definition dec_round10 (s: state) : state :=
   add_round_key key0 (inv_sub_bytes (inv_shift_rows (s)))
 .
 
-Definition dec_aes (k c: matrix) : matrix :=
+Definition decryption (c: state) : state :=
   dec_round10 (dec_round9 (dec_round8 (dec_round7 (dec_round6 (dec_round5
   (dec_round4 (dec_round3 (dec_round2 (dec_round1 (add_round_key key10 c))))))))))
 .
 
-Theorem aes_correctness: forall k: matrix, forall m: matrix,
-    dec_aes k (enc_aes k m) = m.
+Theorem aes_correctness: forall m: state,
+    decryption (encryption (m)) = m.
 Proof.
-  intros k m.
-  unfold enc_aes.
-  unfold dec_aes.
+  intros m.
+  unfold encryption.
+  unfold decryption.
   unfold enc_round10.
-  rewrite xor_xor_matrix.
+  rewrite xor_xor_state.
   unfold dec_round1.
   rewrite srows_inv_srows.
   rewrite sbytes_inv_sbytes.
   unfold enc_round9.
-  rewrite xor_xor_matrix.
+  rewrite xor_xor_state.
   rewrite mc_inv_mc.
   unfold dec_round2.
   rewrite srows_inv_srows.
   rewrite sbytes_inv_sbytes.
   unfold enc_round8.
-  rewrite xor_xor_matrix.
+  rewrite xor_xor_state.
   rewrite mc_inv_mc.
   unfold dec_round3.
   rewrite srows_inv_srows.
   rewrite sbytes_inv_sbytes.
   unfold enc_round7.
-  rewrite xor_xor_matrix.
+  rewrite xor_xor_state.
   rewrite mc_inv_mc.
   unfold dec_round4.
   rewrite srows_inv_srows.
   rewrite sbytes_inv_sbytes.
   unfold enc_round6.
-  rewrite xor_xor_matrix.
+  rewrite xor_xor_state.
   rewrite mc_inv_mc.
   unfold dec_round5.
   rewrite srows_inv_srows.
   rewrite sbytes_inv_sbytes.
   unfold enc_round5.
-  rewrite xor_xor_matrix.
+  rewrite xor_xor_state.
   rewrite mc_inv_mc.
   unfold dec_round6.
   rewrite srows_inv_srows.
   rewrite sbytes_inv_sbytes.
   unfold enc_round4.
-  rewrite xor_xor_matrix.
+  rewrite xor_xor_state.
   rewrite mc_inv_mc.
   unfold dec_round7.
   rewrite srows_inv_srows.
   rewrite sbytes_inv_sbytes.
   unfold enc_round3.
-  rewrite xor_xor_matrix.
+  rewrite xor_xor_state.
   rewrite mc_inv_mc.
   unfold dec_round8.
   rewrite srows_inv_srows.
   rewrite sbytes_inv_sbytes.
   unfold enc_round2.
-  rewrite xor_xor_matrix.
+  rewrite xor_xor_state.
   rewrite mc_inv_mc.
   unfold dec_round9.
   rewrite srows_inv_srows.
   rewrite sbytes_inv_sbytes.
   unfold enc_round1.
-  rewrite xor_xor_matrix.
+  rewrite xor_xor_state.
   rewrite mc_inv_mc.
   unfold dec_round10.
   rewrite srows_inv_srows.
   rewrite sbytes_inv_sbytes.
-  rewrite xor_xor_matrix.
+  rewrite xor_xor_state.
   reflexivity.
 Qed.
 
-Inductive blocks :=
-| B0 (s: matrix)
-| BS (s: matrix) (b: blocks)
-.
-
-Fixpoint enc_aes_ecb (key: matrix) (message: blocks):  blocks:=
-  match message with
-  | B0 s => B0 (enc_aes key s)
-  | BS s b => BS (enc_aes key s) (enc_aes_ecb key b)
-  end.
-
-Fixpoint dec_aes_ecb (key: matrix) (ciphertext: blocks): blocks :=
-  match ciphertext with
-  | B0 s => B0 (dec_aes key s)
-  | BS s b => BS (dec_aes key s) (dec_aes_ecb key b)
-  end.
-
-Theorem aes_ecb_correctness: forall key: matrix, forall message: blocks,
-    dec_aes_ecb key (enc_aes_ecb key message) = message.
-Proof.
-  intros k m.
-  induction m as [|ms mb Hm].
-  - simpl. rewrite aes_correctness. reflexivity.
-  - simpl. rewrite Hm. rewrite aes_correctness.
-    reflexivity.
-Qed.
-
-    
