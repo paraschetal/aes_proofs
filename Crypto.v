@@ -40,8 +40,10 @@ Definition xor_bits (b1 b2: bit) : bit :=
          
 Definition xor_bytes (b a: byte) : byte :=
   match b with
+  | bits8 s0 s0 s0 s0 s0 s0 s0 s0 => a
   | bits8 b7 b6 b5 b4 b3 b2 b1 b0 =>
       match a with
+      | bits8 s0 s0 s0 s0 s0 s0 s0 s0 => b
       | bits8 a7 a6 a5 a4 a3 a2 a1 a0 =>
           bits8 (xor_bits b7 a7) (xor_bits b6 a6) (xor_bits b5 a5) (xor_bits b4 a4) (xor_bits b3 a3) (xor_bits b2 a2) (xor_bits b1 a1) (xor_bits b0 a0)
       end
@@ -56,9 +58,264 @@ Definition bit_to_nat(a: bit) : nat :=
   end.
 
 Definition byte_to_nat(a : byte) : nat := 
-  match a with 
-    | bits8 b7 b6 b5 b4 b3 b2 b1 b0 =>
-      (2*(2*(2*(2*(2*(2*((2* (bit_to_nat b0))+bit_to_nat b1))+bit_to_nat b2)+bit_to_nat b3)+bit_to_nat b4)+bit_to_nat b5)+bit_to_nat b6)+bit_to_nat b7
+match a with 
+| bits8 s0 s0 s0 s0 s0 s0 s0 s0  => 0 
+| bits8 s0 s0 s0 s0 s0 s0 s0 s1  => 1 
+| bits8 s0 s0 s0 s0 s0 s0 s1 s0  => 2 
+| bits8 s0 s0 s0 s0 s0 s0 s1 s1  => 3 
+| bits8 s0 s0 s0 s0 s0 s1 s0 s0  => 4 
+| bits8 s0 s0 s0 s0 s0 s1 s0 s1  => 5 
+| bits8 s0 s0 s0 s0 s0 s1 s1 s0  => 6 
+| bits8 s0 s0 s0 s0 s0 s1 s1 s1  => 7 
+| bits8 s0 s0 s0 s0 s1 s0 s0 s0  => 8 
+| bits8 s0 s0 s0 s0 s1 s0 s0 s1  => 9 
+| bits8 s0 s0 s0 s0 s1 s0 s1 s0  => 10 
+| bits8 s0 s0 s0 s0 s1 s0 s1 s1  => 11 
+| bits8 s0 s0 s0 s0 s1 s1 s0 s0  => 12 
+| bits8 s0 s0 s0 s0 s1 s1 s0 s1  => 13 
+| bits8 s0 s0 s0 s0 s1 s1 s1 s0  => 14 
+| bits8 s0 s0 s0 s0 s1 s1 s1 s1  => 15 
+| bits8 s0 s0 s0 s1 s0 s0 s0 s0  => 16 
+| bits8 s0 s0 s0 s1 s0 s0 s0 s1  => 17 
+| bits8 s0 s0 s0 s1 s0 s0 s1 s0  => 18 
+| bits8 s0 s0 s0 s1 s0 s0 s1 s1  => 19 
+| bits8 s0 s0 s0 s1 s0 s1 s0 s0  => 20 
+| bits8 s0 s0 s0 s1 s0 s1 s0 s1  => 21 
+| bits8 s0 s0 s0 s1 s0 s1 s1 s0  => 22 
+| bits8 s0 s0 s0 s1 s0 s1 s1 s1  => 23 
+| bits8 s0 s0 s0 s1 s1 s0 s0 s0  => 24 
+| bits8 s0 s0 s0 s1 s1 s0 s0 s1  => 25 
+| bits8 s0 s0 s0 s1 s1 s0 s1 s0  => 26 
+| bits8 s0 s0 s0 s1 s1 s0 s1 s1  => 27 
+| bits8 s0 s0 s0 s1 s1 s1 s0 s0  => 28 
+| bits8 s0 s0 s0 s1 s1 s1 s0 s1  => 29 
+| bits8 s0 s0 s0 s1 s1 s1 s1 s0  => 30 
+| bits8 s0 s0 s0 s1 s1 s1 s1 s1  => 31 
+| bits8 s0 s0 s1 s0 s0 s0 s0 s0  => 32 
+| bits8 s0 s0 s1 s0 s0 s0 s0 s1  => 33 
+| bits8 s0 s0 s1 s0 s0 s0 s1 s0  => 34 
+| bits8 s0 s0 s1 s0 s0 s0 s1 s1  => 35 
+| bits8 s0 s0 s1 s0 s0 s1 s0 s0  => 36 
+| bits8 s0 s0 s1 s0 s0 s1 s0 s1  => 37 
+| bits8 s0 s0 s1 s0 s0 s1 s1 s0  => 38 
+| bits8 s0 s0 s1 s0 s0 s1 s1 s1  => 39 
+| bits8 s0 s0 s1 s0 s1 s0 s0 s0  => 40 
+| bits8 s0 s0 s1 s0 s1 s0 s0 s1  => 41 
+| bits8 s0 s0 s1 s0 s1 s0 s1 s0  => 42 
+| bits8 s0 s0 s1 s0 s1 s0 s1 s1  => 43 
+| bits8 s0 s0 s1 s0 s1 s1 s0 s0  => 44 
+| bits8 s0 s0 s1 s0 s1 s1 s0 s1  => 45 
+| bits8 s0 s0 s1 s0 s1 s1 s1 s0  => 46 
+| bits8 s0 s0 s1 s0 s1 s1 s1 s1  => 47 
+| bits8 s0 s0 s1 s1 s0 s0 s0 s0  => 48 
+| bits8 s0 s0 s1 s1 s0 s0 s0 s1  => 49 
+| bits8 s0 s0 s1 s1 s0 s0 s1 s0  => 50 
+| bits8 s0 s0 s1 s1 s0 s0 s1 s1  => 51 
+| bits8 s0 s0 s1 s1 s0 s1 s0 s0  => 52 
+| bits8 s0 s0 s1 s1 s0 s1 s0 s1  => 53 
+| bits8 s0 s0 s1 s1 s0 s1 s1 s0  => 54 
+| bits8 s0 s0 s1 s1 s0 s1 s1 s1  => 55 
+| bits8 s0 s0 s1 s1 s1 s0 s0 s0  => 56 
+| bits8 s0 s0 s1 s1 s1 s0 s0 s1  => 57 
+| bits8 s0 s0 s1 s1 s1 s0 s1 s0  => 58 
+| bits8 s0 s0 s1 s1 s1 s0 s1 s1  => 59 
+| bits8 s0 s0 s1 s1 s1 s1 s0 s0  => 60 
+| bits8 s0 s0 s1 s1 s1 s1 s0 s1  => 61 
+| bits8 s0 s0 s1 s1 s1 s1 s1 s0  => 62 
+| bits8 s0 s0 s1 s1 s1 s1 s1 s1  => 63 
+| bits8 s0 s1 s0 s0 s0 s0 s0 s0  => 64 
+| bits8 s0 s1 s0 s0 s0 s0 s0 s1  => 65 
+| bits8 s0 s1 s0 s0 s0 s0 s1 s0  => 66 
+| bits8 s0 s1 s0 s0 s0 s0 s1 s1  => 67 
+| bits8 s0 s1 s0 s0 s0 s1 s0 s0  => 68 
+| bits8 s0 s1 s0 s0 s0 s1 s0 s1  => 69 
+| bits8 s0 s1 s0 s0 s0 s1 s1 s0  => 70 
+| bits8 s0 s1 s0 s0 s0 s1 s1 s1  => 71 
+| bits8 s0 s1 s0 s0 s1 s0 s0 s0  => 72 
+| bits8 s0 s1 s0 s0 s1 s0 s0 s1  => 73 
+| bits8 s0 s1 s0 s0 s1 s0 s1 s0  => 74 
+| bits8 s0 s1 s0 s0 s1 s0 s1 s1  => 75 
+| bits8 s0 s1 s0 s0 s1 s1 s0 s0  => 76 
+| bits8 s0 s1 s0 s0 s1 s1 s0 s1  => 77 
+| bits8 s0 s1 s0 s0 s1 s1 s1 s0  => 78 
+| bits8 s0 s1 s0 s0 s1 s1 s1 s1  => 79 
+| bits8 s0 s1 s0 s1 s0 s0 s0 s0  => 80 
+| bits8 s0 s1 s0 s1 s0 s0 s0 s1  => 81 
+| bits8 s0 s1 s0 s1 s0 s0 s1 s0  => 82 
+| bits8 s0 s1 s0 s1 s0 s0 s1 s1  => 83 
+| bits8 s0 s1 s0 s1 s0 s1 s0 s0  => 84 
+| bits8 s0 s1 s0 s1 s0 s1 s0 s1  => 85 
+| bits8 s0 s1 s0 s1 s0 s1 s1 s0  => 86 
+| bits8 s0 s1 s0 s1 s0 s1 s1 s1  => 87 
+| bits8 s0 s1 s0 s1 s1 s0 s0 s0  => 88 
+| bits8 s0 s1 s0 s1 s1 s0 s0 s1  => 89 
+| bits8 s0 s1 s0 s1 s1 s0 s1 s0  => 90 
+| bits8 s0 s1 s0 s1 s1 s0 s1 s1  => 91 
+| bits8 s0 s1 s0 s1 s1 s1 s0 s0  => 92 
+| bits8 s0 s1 s0 s1 s1 s1 s0 s1  => 93 
+| bits8 s0 s1 s0 s1 s1 s1 s1 s0  => 94 
+| bits8 s0 s1 s0 s1 s1 s1 s1 s1  => 95 
+| bits8 s0 s1 s1 s0 s0 s0 s0 s0  => 96 
+| bits8 s0 s1 s1 s0 s0 s0 s0 s1  => 97 
+| bits8 s0 s1 s1 s0 s0 s0 s1 s0  => 98 
+| bits8 s0 s1 s1 s0 s0 s0 s1 s1  => 99 
+| bits8 s0 s1 s1 s0 s0 s1 s0 s0  => 100 
+| bits8 s0 s1 s1 s0 s0 s1 s0 s1  => 101 
+| bits8 s0 s1 s1 s0 s0 s1 s1 s0  => 102 
+| bits8 s0 s1 s1 s0 s0 s1 s1 s1  => 103 
+| bits8 s0 s1 s1 s0 s1 s0 s0 s0  => 104 
+| bits8 s0 s1 s1 s0 s1 s0 s0 s1  => 105 
+| bits8 s0 s1 s1 s0 s1 s0 s1 s0  => 106 
+| bits8 s0 s1 s1 s0 s1 s0 s1 s1  => 107 
+| bits8 s0 s1 s1 s0 s1 s1 s0 s0  => 108 
+| bits8 s0 s1 s1 s0 s1 s1 s0 s1  => 109 
+| bits8 s0 s1 s1 s0 s1 s1 s1 s0  => 110 
+| bits8 s0 s1 s1 s0 s1 s1 s1 s1  => 111 
+| bits8 s0 s1 s1 s1 s0 s0 s0 s0  => 112 
+| bits8 s0 s1 s1 s1 s0 s0 s0 s1  => 113 
+| bits8 s0 s1 s1 s1 s0 s0 s1 s0  => 114 
+| bits8 s0 s1 s1 s1 s0 s0 s1 s1  => 115 
+| bits8 s0 s1 s1 s1 s0 s1 s0 s0  => 116 
+| bits8 s0 s1 s1 s1 s0 s1 s0 s1  => 117 
+| bits8 s0 s1 s1 s1 s0 s1 s1 s0  => 118 
+| bits8 s0 s1 s1 s1 s0 s1 s1 s1  => 119 
+| bits8 s0 s1 s1 s1 s1 s0 s0 s0  => 120 
+| bits8 s0 s1 s1 s1 s1 s0 s0 s1  => 121 
+| bits8 s0 s1 s1 s1 s1 s0 s1 s0  => 122 
+| bits8 s0 s1 s1 s1 s1 s0 s1 s1  => 123 
+| bits8 s0 s1 s1 s1 s1 s1 s0 s0  => 124 
+| bits8 s0 s1 s1 s1 s1 s1 s0 s1  => 125 
+| bits8 s0 s1 s1 s1 s1 s1 s1 s0  => 126 
+| bits8 s0 s1 s1 s1 s1 s1 s1 s1  => 127 
+| bits8 s1 s0 s0 s0 s0 s0 s0 s0  => 128 
+| bits8 s1 s0 s0 s0 s0 s0 s0 s1  => 129 
+| bits8 s1 s0 s0 s0 s0 s0 s1 s0  => 130 
+| bits8 s1 s0 s0 s0 s0 s0 s1 s1  => 131 
+| bits8 s1 s0 s0 s0 s0 s1 s0 s0  => 132 
+| bits8 s1 s0 s0 s0 s0 s1 s0 s1  => 133 
+| bits8 s1 s0 s0 s0 s0 s1 s1 s0  => 134 
+| bits8 s1 s0 s0 s0 s0 s1 s1 s1  => 135 
+| bits8 s1 s0 s0 s0 s1 s0 s0 s0  => 136 
+| bits8 s1 s0 s0 s0 s1 s0 s0 s1  => 137 
+| bits8 s1 s0 s0 s0 s1 s0 s1 s0  => 138 
+| bits8 s1 s0 s0 s0 s1 s0 s1 s1  => 139 
+| bits8 s1 s0 s0 s0 s1 s1 s0 s0  => 140 
+| bits8 s1 s0 s0 s0 s1 s1 s0 s1  => 141 
+| bits8 s1 s0 s0 s0 s1 s1 s1 s0  => 142 
+| bits8 s1 s0 s0 s0 s1 s1 s1 s1  => 143 
+| bits8 s1 s0 s0 s1 s0 s0 s0 s0  => 144 
+| bits8 s1 s0 s0 s1 s0 s0 s0 s1  => 145 
+| bits8 s1 s0 s0 s1 s0 s0 s1 s0  => 146 
+| bits8 s1 s0 s0 s1 s0 s0 s1 s1  => 147 
+| bits8 s1 s0 s0 s1 s0 s1 s0 s0  => 148 
+| bits8 s1 s0 s0 s1 s0 s1 s0 s1  => 149 
+| bits8 s1 s0 s0 s1 s0 s1 s1 s0  => 150 
+| bits8 s1 s0 s0 s1 s0 s1 s1 s1  => 151 
+| bits8 s1 s0 s0 s1 s1 s0 s0 s0  => 152 
+| bits8 s1 s0 s0 s1 s1 s0 s0 s1  => 153 
+| bits8 s1 s0 s0 s1 s1 s0 s1 s0  => 154 
+| bits8 s1 s0 s0 s1 s1 s0 s1 s1  => 155 
+| bits8 s1 s0 s0 s1 s1 s1 s0 s0  => 156 
+| bits8 s1 s0 s0 s1 s1 s1 s0 s1  => 157 
+| bits8 s1 s0 s0 s1 s1 s1 s1 s0  => 158 
+| bits8 s1 s0 s0 s1 s1 s1 s1 s1  => 159 
+| bits8 s1 s0 s1 s0 s0 s0 s0 s0  => 160 
+| bits8 s1 s0 s1 s0 s0 s0 s0 s1  => 161 
+| bits8 s1 s0 s1 s0 s0 s0 s1 s0  => 162 
+| bits8 s1 s0 s1 s0 s0 s0 s1 s1  => 163 
+| bits8 s1 s0 s1 s0 s0 s1 s0 s0  => 164 
+| bits8 s1 s0 s1 s0 s0 s1 s0 s1  => 165 
+| bits8 s1 s0 s1 s0 s0 s1 s1 s0  => 166 
+| bits8 s1 s0 s1 s0 s0 s1 s1 s1  => 167 
+| bits8 s1 s0 s1 s0 s1 s0 s0 s0  => 168 
+| bits8 s1 s0 s1 s0 s1 s0 s0 s1  => 169 
+| bits8 s1 s0 s1 s0 s1 s0 s1 s0  => 170 
+| bits8 s1 s0 s1 s0 s1 s0 s1 s1  => 171 
+| bits8 s1 s0 s1 s0 s1 s1 s0 s0  => 172 
+| bits8 s1 s0 s1 s0 s1 s1 s0 s1  => 173 
+| bits8 s1 s0 s1 s0 s1 s1 s1 s0  => 174 
+| bits8 s1 s0 s1 s0 s1 s1 s1 s1  => 175 
+| bits8 s1 s0 s1 s1 s0 s0 s0 s0  => 176 
+| bits8 s1 s0 s1 s1 s0 s0 s0 s1  => 177 
+| bits8 s1 s0 s1 s1 s0 s0 s1 s0  => 178 
+| bits8 s1 s0 s1 s1 s0 s0 s1 s1  => 179 
+| bits8 s1 s0 s1 s1 s0 s1 s0 s0  => 180 
+| bits8 s1 s0 s1 s1 s0 s1 s0 s1  => 181 
+| bits8 s1 s0 s1 s1 s0 s1 s1 s0  => 182 
+| bits8 s1 s0 s1 s1 s0 s1 s1 s1  => 183 
+| bits8 s1 s0 s1 s1 s1 s0 s0 s0  => 184 
+| bits8 s1 s0 s1 s1 s1 s0 s0 s1  => 185 
+| bits8 s1 s0 s1 s1 s1 s0 s1 s0  => 186 
+| bits8 s1 s0 s1 s1 s1 s0 s1 s1  => 187 
+| bits8 s1 s0 s1 s1 s1 s1 s0 s0  => 188 
+| bits8 s1 s0 s1 s1 s1 s1 s0 s1  => 189 
+| bits8 s1 s0 s1 s1 s1 s1 s1 s0  => 190 
+| bits8 s1 s0 s1 s1 s1 s1 s1 s1  => 191 
+| bits8 s1 s1 s0 s0 s0 s0 s0 s0  => 192 
+| bits8 s1 s1 s0 s0 s0 s0 s0 s1  => 193 
+| bits8 s1 s1 s0 s0 s0 s0 s1 s0  => 194 
+| bits8 s1 s1 s0 s0 s0 s0 s1 s1  => 195 
+| bits8 s1 s1 s0 s0 s0 s1 s0 s0  => 196 
+| bits8 s1 s1 s0 s0 s0 s1 s0 s1  => 197 
+| bits8 s1 s1 s0 s0 s0 s1 s1 s0  => 198 
+| bits8 s1 s1 s0 s0 s0 s1 s1 s1  => 199 
+| bits8 s1 s1 s0 s0 s1 s0 s0 s0  => 200 
+| bits8 s1 s1 s0 s0 s1 s0 s0 s1  => 201 
+| bits8 s1 s1 s0 s0 s1 s0 s1 s0  => 202 
+| bits8 s1 s1 s0 s0 s1 s0 s1 s1  => 203 
+| bits8 s1 s1 s0 s0 s1 s1 s0 s0  => 204 
+| bits8 s1 s1 s0 s0 s1 s1 s0 s1  => 205 
+| bits8 s1 s1 s0 s0 s1 s1 s1 s0  => 206 
+| bits8 s1 s1 s0 s0 s1 s1 s1 s1  => 207 
+| bits8 s1 s1 s0 s1 s0 s0 s0 s0  => 208 
+| bits8 s1 s1 s0 s1 s0 s0 s0 s1  => 209 
+| bits8 s1 s1 s0 s1 s0 s0 s1 s0  => 210 
+| bits8 s1 s1 s0 s1 s0 s0 s1 s1  => 211 
+| bits8 s1 s1 s0 s1 s0 s1 s0 s0  => 212 
+| bits8 s1 s1 s0 s1 s0 s1 s0 s1  => 213 
+| bits8 s1 s1 s0 s1 s0 s1 s1 s0  => 214 
+| bits8 s1 s1 s0 s1 s0 s1 s1 s1  => 215 
+| bits8 s1 s1 s0 s1 s1 s0 s0 s0  => 216 
+| bits8 s1 s1 s0 s1 s1 s0 s0 s1  => 217 
+| bits8 s1 s1 s0 s1 s1 s0 s1 s0  => 218 
+| bits8 s1 s1 s0 s1 s1 s0 s1 s1  => 219 
+| bits8 s1 s1 s0 s1 s1 s1 s0 s0  => 220 
+| bits8 s1 s1 s0 s1 s1 s1 s0 s1  => 221 
+| bits8 s1 s1 s0 s1 s1 s1 s1 s0  => 222 
+| bits8 s1 s1 s0 s1 s1 s1 s1 s1  => 223 
+| bits8 s1 s1 s1 s0 s0 s0 s0 s0  => 224 
+| bits8 s1 s1 s1 s0 s0 s0 s0 s1  => 225 
+| bits8 s1 s1 s1 s0 s0 s0 s1 s0  => 226 
+| bits8 s1 s1 s1 s0 s0 s0 s1 s1  => 227 
+| bits8 s1 s1 s1 s0 s0 s1 s0 s0  => 228 
+| bits8 s1 s1 s1 s0 s0 s1 s0 s1  => 229 
+| bits8 s1 s1 s1 s0 s0 s1 s1 s0  => 230 
+| bits8 s1 s1 s1 s0 s0 s1 s1 s1  => 231 
+| bits8 s1 s1 s1 s0 s1 s0 s0 s0  => 232 
+| bits8 s1 s1 s1 s0 s1 s0 s0 s1  => 233 
+| bits8 s1 s1 s1 s0 s1 s0 s1 s0  => 234 
+| bits8 s1 s1 s1 s0 s1 s0 s1 s1  => 235 
+| bits8 s1 s1 s1 s0 s1 s1 s0 s0  => 236 
+| bits8 s1 s1 s1 s0 s1 s1 s0 s1  => 237 
+| bits8 s1 s1 s1 s0 s1 s1 s1 s0  => 238 
+| bits8 s1 s1 s1 s0 s1 s1 s1 s1  => 239 
+| bits8 s1 s1 s1 s1 s0 s0 s0 s0  => 240 
+| bits8 s1 s1 s1 s1 s0 s0 s0 s1  => 241 
+| bits8 s1 s1 s1 s1 s0 s0 s1 s0  => 242 
+| bits8 s1 s1 s1 s1 s0 s0 s1 s1  => 243 
+| bits8 s1 s1 s1 s1 s0 s1 s0 s0  => 244 
+| bits8 s1 s1 s1 s1 s0 s1 s0 s1  => 245 
+| bits8 s1 s1 s1 s1 s0 s1 s1 s0  => 246 
+| bits8 s1 s1 s1 s1 s0 s1 s1 s1  => 247 
+| bits8 s1 s1 s1 s1 s1 s0 s0 s0  => 248 
+| bits8 s1 s1 s1 s1 s1 s0 s0 s1  => 249 
+| bits8 s1 s1 s1 s1 s1 s0 s1 s0  => 250 
+| bits8 s1 s1 s1 s1 s1 s0 s1 s1  => 251 
+| bits8 s1 s1 s1 s1 s1 s1 s0 s0  => 252 
+| bits8 s1 s1 s1 s1 s1 s1 s0 s1  => 253 
+| bits8 s1 s1 s1 s1 s1 s1 s1 s0  => 254 
+| bits8 s1 s1 s1 s1 s1 s1 s1 s1  => 255 
+
   end.
 
 Definition nat_to_byte(a : nat) : byte := 
@@ -403,6 +660,11 @@ Definition GF_shift_left (a : bit16) : bit16 :=
   | bits16 b0 b1 b2 b3 b4 b5 b6 b7 b8 b9 b10 b11 b12 b13 b14 b15 => bits16 b1 b2 b3 b4 b5 b6 b7 b8 b9 b10 b11 b12 b13 b14 b15 s0
 end.
 
+Definition byte_shift_left (a : byte) : byte :=
+  match a with
+  | bits8 b0 b1 b2 b3 b4 b5 b6 b7 => bits8 b1 b2 b3 b4 b5 b6 b7 s0
+end.
+
  Definition GF_mod_xor (a : bit16) (b : byte) : bit16 :=
 match a, b with
 | bits16 a0 a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13 a14 a15, bits8 b0 b1 b2 b3 b4 b5 b6 b7 => 
@@ -458,7 +720,7 @@ Abort.
  
 (* https://en.wikipedia.org/wiki/Rijndael_MixColumns#Galois_Multiplication_lookup_tables*)
 
-Definition GF_mul_table (a : byte) (b : nat) : byte :=
+(* Definition GF_mul_table (a : byte) (b : nat) : byte :=
 match b with 
 
 | 1 => a
@@ -475,10 +737,44 @@ match b with
 | 14 => match a with 
 | bits8 s0 s0 s0 s0 s0 s0 s0 s0  => bits8 s0 s0 s0 s0 s0 s0 s0 s0  | bits8 s0 s0 s0 s0 s0 s0 s0 s1  => bits8 s0 s0 s0 s0 s1 s1 s1 s0  | bits8 s0 s0 s0 s0 s0 s0 s1 s0  => bits8 s0 s0 s0 s1 s1 s1 s0 s0  | bits8 s0 s0 s0 s0 s0 s0 s1 s1  => bits8 s0 s0 s0 s1 s0 s0 s1 s0  | bits8 s0 s0 s0 s0 s0 s1 s0 s0  => bits8 s0 s0 s1 s1 s1 s0 s0 s0  | bits8 s0 s0 s0 s0 s0 s1 s0 s1  => bits8 s0 s0 s1 s1 s0 s1 s1 s0  | bits8 s0 s0 s0 s0 s0 s1 s1 s0  => bits8 s0 s0 s1 s0 s0 s1 s0 s0  | bits8 s0 s0 s0 s0 s0 s1 s1 s1  => bits8 s0 s0 s1 s0 s1 s0 s1 s0  | bits8 s0 s0 s0 s0 s1 s0 s0 s0  => bits8 s0 s1 s1 s1 s0 s0 s0 s0  | bits8 s0 s0 s0 s0 s1 s0 s0 s1  => bits8 s0 s1 s1 s1 s1 s1 s1 s0  | bits8 s0 s0 s0 s0 s1 s0 s1 s0  => bits8 s0 s1 s1 s0 s1 s1 s0 s0  | bits8 s0 s0 s0 s0 s1 s0 s1 s1  => bits8 s0 s1 s1 s0 s0 s0 s1 s0  | bits8 s0 s0 s0 s0 s1 s1 s0 s0  => bits8 s0 s1 s0 s0 s1 s0 s0 s0  | bits8 s0 s0 s0 s0 s1 s1 s0 s1  => bits8 s0 s1 s0 s0 s0 s1 s1 s0  | bits8 s0 s0 s0 s0 s1 s1 s1 s0  => bits8 s0 s1 s0 s1 s0 s1 s0 s0  | bits8 s0 s0 s0 s0 s1 s1 s1 s1  => bits8 s0 s1 s0 s1 s1 s0 s1 s0  | bits8 s0 s0 s0 s1 s0 s0 s0 s0  => bits8 s1 s1 s1 s0 s0 s0 s0 s0  | bits8 s0 s0 s0 s1 s0 s0 s0 s1  => bits8 s1 s1 s1 s0 s1 s1 s1 s0  | bits8 s0 s0 s0 s1 s0 s0 s1 s0  => bits8 s1 s1 s1 s1 s1 s1 s0 s0  | bits8 s0 s0 s0 s1 s0 s0 s1 s1  => bits8 s1 s1 s1 s1 s0 s0 s1 s0  | bits8 s0 s0 s0 s1 s0 s1 s0 s0  => bits8 s1 s1 s0 s1 s1 s0 s0 s0  | bits8 s0 s0 s0 s1 s0 s1 s0 s1  => bits8 s1 s1 s0 s1 s0 s1 s1 s0  | bits8 s0 s0 s0 s1 s0 s1 s1 s0  => bits8 s1 s1 s0 s0 s0 s1 s0 s0  | bits8 s0 s0 s0 s1 s0 s1 s1 s1  => bits8 s1 s1 s0 s0 s1 s0 s1 s0  | bits8 s0 s0 s0 s1 s1 s0 s0 s0  => bits8 s1 s0 s0 s1 s0 s0 s0 s0  | bits8 s0 s0 s0 s1 s1 s0 s0 s1  => bits8 s1 s0 s0 s1 s1 s1 s1 s0  | bits8 s0 s0 s0 s1 s1 s0 s1 s0  => bits8 s1 s0 s0 s0 s1 s1 s0 s0  | bits8 s0 s0 s0 s1 s1 s0 s1 s1  => bits8 s1 s0 s0 s0 s0 s0 s1 s0  | bits8 s0 s0 s0 s1 s1 s1 s0 s0  => bits8 s1 s0 s1 s0 s1 s0 s0 s0  | bits8 s0 s0 s0 s1 s1 s1 s0 s1  => bits8 s1 s0 s1 s0 s0 s1 s1 s0  | bits8 s0 s0 s0 s1 s1 s1 s1 s0  => bits8 s1 s0 s1 s1 s0 s1 s0 s0  | bits8 s0 s0 s0 s1 s1 s1 s1 s1  => bits8 s1 s0 s1 s1 s1 s0 s1 s0  | bits8 s0 s0 s1 s0 s0 s0 s0 s0  => bits8 s1 s1 s0 s1 s1 s0 s1 s1  | bits8 s0 s0 s1 s0 s0 s0 s0 s1  => bits8 s1 s1 s0 s1 s0 s1 s0 s1  | bits8 s0 s0 s1 s0 s0 s0 s1 s0  => bits8 s1 s1 s0 s0 s0 s1 s1 s1  | bits8 s0 s0 s1 s0 s0 s0 s1 s1  => bits8 s1 s1 s0 s0 s1 s0 s0 s1  | bits8 s0 s0 s1 s0 s0 s1 s0 s0  => bits8 s1 s1 s1 s0 s0 s0 s1 s1  | bits8 s0 s0 s1 s0 s0 s1 s0 s1  => bits8 s1 s1 s1 s0 s1 s1 s0 s1  | bits8 s0 s0 s1 s0 s0 s1 s1 s0  => bits8 s1 s1 s1 s1 s1 s1 s1 s1  | bits8 s0 s0 s1 s0 s0 s1 s1 s1  => bits8 s1 s1 s1 s1 s0 s0 s0 s1  | bits8 s0 s0 s1 s0 s1 s0 s0 s0  => bits8 s1 s0 s1 s0 s1 s0 s1 s1  | bits8 s0 s0 s1 s0 s1 s0 s0 s1  => bits8 s1 s0 s1 s0 s0 s1 s0 s1  | bits8 s0 s0 s1 s0 s1 s0 s1 s0  => bits8 s1 s0 s1 s1 s0 s1 s1 s1  | bits8 s0 s0 s1 s0 s1 s0 s1 s1  => bits8 s1 s0 s1 s1 s1 s0 s0 s1  | bits8 s0 s0 s1 s0 s1 s1 s0 s0  => bits8 s1 s0 s0 s1 s0 s0 s1 s1  | bits8 s0 s0 s1 s0 s1 s1 s0 s1  => bits8 s1 s0 s0 s1 s1 s1 s0 s1  | bits8 s0 s0 s1 s0 s1 s1 s1 s0  => bits8 s1 s0 s0 s0 s1 s1 s1 s1  | bits8 s0 s0 s1 s0 s1 s1 s1 s1  => bits8 s1 s0 s0 s0 s0 s0 s0 s1  | bits8 s0 s0 s1 s1 s0 s0 s0 s0  => bits8 s0 s0 s1 s1 s1 s0 s1 s1  | bits8 s0 s0 s1 s1 s0 s0 s0 s1  => bits8 s0 s0 s1 s1 s0 s1 s0 s1  | bits8 s0 s0 s1 s1 s0 s0 s1 s0  => bits8 s0 s0 s1 s0 s0 s1 s1 s1  | bits8 s0 s0 s1 s1 s0 s0 s1 s1  => bits8 s0 s0 s1 s0 s1 s0 s0 s1  | bits8 s0 s0 s1 s1 s0 s1 s0 s0  => bits8 s0 s0 s0 s0 s0 s0 s1 s1  | bits8 s0 s0 s1 s1 s0 s1 s0 s1  => bits8 s0 s0 s0 s0 s1 s1 s0 s1  | bits8 s0 s0 s1 s1 s0 s1 s1 s0  => bits8 s0 s0 s0 s1 s1 s1 s1 s1  | bits8 s0 s0 s1 s1 s0 s1 s1 s1  => bits8 s0 s0 s0 s1 s0 s0 s0 s1  | bits8 s0 s0 s1 s1 s1 s0 s0 s0  => bits8 s0 s1 s0 s0 s1 s0 s1 s1  | bits8 s0 s0 s1 s1 s1 s0 s0 s1  => bits8 s0 s1 s0 s0 s0 s1 s0 s1  | bits8 s0 s0 s1 s1 s1 s0 s1 s0  => bits8 s0 s1 s0 s1 s0 s1 s1 s1  | bits8 s0 s0 s1 s1 s1 s0 s1 s1  => bits8 s0 s1 s0 s1 s1 s0 s0 s1  | bits8 s0 s0 s1 s1 s1 s1 s0 s0  => bits8 s0 s1 s1 s1 s0 s0 s1 s1  | bits8 s0 s0 s1 s1 s1 s1 s0 s1  => bits8 s0 s1 s1 s1 s1 s1 s0 s1  | bits8 s0 s0 s1 s1 s1 s1 s1 s0  => bits8 s0 s1 s1 s0 s1 s1 s1 s1  | bits8 s0 s0 s1 s1 s1 s1 s1 s1  => bits8 s0 s1 s1 s0 s0 s0 s0 s1  | bits8 s0 s1 s0 s0 s0 s0 s0 s0  => bits8 s1 s0 s1 s0 s1 s1 s0 s1  | bits8 s0 s1 s0 s0 s0 s0 s0 s1  => bits8 s1 s0 s1 s0 s0 s0 s1 s1  | bits8 s0 s1 s0 s0 s0 s0 s1 s0  => bits8 s1 s0 s1 s1 s0 s0 s0 s1  | bits8 s0 s1 s0 s0 s0 s0 s1 s1  => bits8 s1 s0 s1 s1 s1 s1 s1 s1  | bits8 s0 s1 s0 s0 s0 s1 s0 s0  => bits8 s1 s0 s0 s1 s0 s1 s0 s1  | bits8 s0 s1 s0 s0 s0 s1 s0 s1  => bits8 s1 s0 s0 s1 s1 s0 s1 s1  | bits8 s0 s1 s0 s0 s0 s1 s1 s0  => bits8 s1 s0 s0 s0 s1 s0 s0 s1  | bits8 s0 s1 s0 s0 s0 s1 s1 s1  => bits8 s1 s0 s0 s0 s0 s1 s1 s1  | bits8 s0 s1 s0 s0 s1 s0 s0 s0  => bits8 s1 s1 s0 s1 s1 s1 s0 s1  | bits8 s0 s1 s0 s0 s1 s0 s0 s1  => bits8 s1 s1 s0 s1 s0 s0 s1 s1  | bits8 s0 s1 s0 s0 s1 s0 s1 s0  => bits8 s1 s1 s0 s0 s0 s0 s0 s1  | bits8 s0 s1 s0 s0 s1 s0 s1 s1  => bits8 s1 s1 s0 s0 s1 s1 s1 s1  | bits8 s0 s1 s0 s0 s1 s1 s0 s0  => bits8 s1 s1 s1 s0 s0 s1 s0 s1  | bits8 s0 s1 s0 s0 s1 s1 s0 s1  => bits8 s1 s1 s1 s0 s1 s0 s1 s1  | bits8 s0 s1 s0 s0 s1 s1 s1 s0  => bits8 s1 s1 s1 s1 s1 s0 s0 s1  | bits8 s0 s1 s0 s0 s1 s1 s1 s1  => bits8 s1 s1 s1 s1 s0 s1 s1 s1  | bits8 s0 s1 s0 s1 s0 s0 s0 s0  => bits8 s0 s1 s0 s0 s1 s1 s0 s1  | bits8 s0 s1 s0 s1 s0 s0 s0 s1  => bits8 s0 s1 s0 s0 s0 s0 s1 s1  | bits8 s0 s1 s0 s1 s0 s0 s1 s0  => bits8 s0 s1 s0 s1 s0 s0 s0 s1  | bits8 s0 s1 s0 s1 s0 s0 s1 s1  => bits8 s0 s1 s0 s1 s1 s1 s1 s1  | bits8 s0 s1 s0 s1 s0 s1 s0 s0  => bits8 s0 s1 s1 s1 s0 s1 s0 s1  | bits8 s0 s1 s0 s1 s0 s1 s0 s1  => bits8 s0 s1 s1 s1 s1 s0 s1 s1  | bits8 s0 s1 s0 s1 s0 s1 s1 s0  => bits8 s0 s1 s1 s0 s1 s0 s0 s1  | bits8 s0 s1 s0 s1 s0 s1 s1 s1  => bits8 s0 s1 s1 s0 s0 s1 s1 s1  | bits8 s0 s1 s0 s1 s1 s0 s0 s0  => bits8 s0 s0 s1 s1 s1 s1 s0 s1  | bits8 s0 s1 s0 s1 s1 s0 s0 s1  => bits8 s0 s0 s1 s1 s0 s0 s1 s1  | bits8 s0 s1 s0 s1 s1 s0 s1 s0  => bits8 s0 s0 s1 s0 s0 s0 s0 s1  | bits8 s0 s1 s0 s1 s1 s0 s1 s1  => bits8 s0 s0 s1 s0 s1 s1 s1 s1  | bits8 s0 s1 s0 s1 s1 s1 s0 s0  => bits8 s0 s0 s0 s0 s0 s1 s0 s1  | bits8 s0 s1 s0 s1 s1 s1 s0 s1  => bits8 s0 s0 s0 s0 s1 s0 s1 s1  | bits8 s0 s1 s0 s1 s1 s1 s1 s0  => bits8 s0 s0 s0 s1 s1 s0 s0 s1  | bits8 s0 s1 s0 s1 s1 s1 s1 s1  => bits8 s0 s0 s0 s1 s0 s1 s1 s1  | bits8 s0 s1 s1 s0 s0 s0 s0 s0  => bits8 s0 s1 s1 s1 s0 s1 s1 s0  | bits8 s0 s1 s1 s0 s0 s0 s0 s1  => bits8 s0 s1 s1 s1 s1 s0 s0 s0  | bits8 s0 s1 s1 s0 s0 s0 s1 s0  => bits8 s0 s1 s1 s0 s1 s0 s1 s0  | bits8 s0 s1 s1 s0 s0 s0 s1 s1  => bits8 s0 s1 s1 s0 s0 s1 s0 s0  | bits8 s0 s1 s1 s0 s0 s1 s0 s0  => bits8 s0 s1 s0 s0 s1 s1 s1 s0  | bits8 s0 s1 s1 s0 s0 s1 s0 s1  => bits8 s0 s1 s0 s0 s0 s0 s0 s0  | bits8 s0 s1 s1 s0 s0 s1 s1 s0  => bits8 s0 s1 s0 s1 s0 s0 s1 s0  | bits8 s0 s1 s1 s0 s0 s1 s1 s1  => bits8 s0 s1 s0 s1 s1 s1 s0 s0  | bits8 s0 s1 s1 s0 s1 s0 s0 s0  => bits8 s0 s0 s0 s0 s0 s1 s1 s0  | bits8 s0 s1 s1 s0 s1 s0 s0 s1  => bits8 s0 s0 s0 s0 s1 s0 s0 s0  | bits8 s0 s1 s1 s0 s1 s0 s1 s0  => bits8 s0 s0 s0 s1 s1 s0 s1 s0  | bits8 s0 s1 s1 s0 s1 s0 s1 s1  => bits8 s0 s0 s0 s1 s0 s1 s0 s0  | bits8 s0 s1 s1 s0 s1 s1 s0 s0  => bits8 s0 s0 s1 s1 s1 s1 s1 s0  | bits8 s0 s1 s1 s0 s1 s1 s0 s1  => bits8 s0 s0 s1 s1 s0 s0 s0 s0  | bits8 s0 s1 s1 s0 s1 s1 s1 s0  => bits8 s0 s0 s1 s0 s0 s0 s1 s0  | bits8 s0 s1 s1 s0 s1 s1 s1 s1  => bits8 s0 s0 s1 s0 s1 s1 s0 s0  | bits8 s0 s1 s1 s1 s0 s0 s0 s0  => bits8 s1 s0 s0 s1 s0 s1 s1 s0  | bits8 s0 s1 s1 s1 s0 s0 s0 s1  => bits8 s1 s0 s0 s1 s1 s0 s0 s0  | bits8 s0 s1 s1 s1 s0 s0 s1 s0  => bits8 s1 s0 s0 s0 s1 s0 s1 s0  | bits8 s0 s1 s1 s1 s0 s0 s1 s1  => bits8 s1 s0 s0 s0 s0 s1 s0 s0  | bits8 s0 s1 s1 s1 s0 s1 s0 s0  => bits8 s1 s0 s1 s0 s1 s1 s1 s0  | bits8 s0 s1 s1 s1 s0 s1 s0 s1  => bits8 s1 s0 s1 s0 s0 s0 s0 s0  | bits8 s0 s1 s1 s1 s0 s1 s1 s0  => bits8 s1 s0 s1 s1 s0 s0 s1 s0  | bits8 s0 s1 s1 s1 s0 s1 s1 s1  => bits8 s1 s0 s1 s1 s1 s1 s0 s0  | bits8 s0 s1 s1 s1 s1 s0 s0 s0  => bits8 s1 s1 s1 s0 s0 s1 s1 s0  | bits8 s0 s1 s1 s1 s1 s0 s0 s1  => bits8 s1 s1 s1 s0 s1 s0 s0 s0  | bits8 s0 s1 s1 s1 s1 s0 s1 s0  => bits8 s1 s1 s1 s1 s1 s0 s1 s0  | bits8 s0 s1 s1 s1 s1 s0 s1 s1  => bits8 s1 s1 s1 s1 s0 s1 s0 s0  | bits8 s0 s1 s1 s1 s1 s1 s0 s0  => bits8 s1 s1 s0 s1 s1 s1 s1 s0  | bits8 s0 s1 s1 s1 s1 s1 s0 s1  => bits8 s1 s1 s0 s1 s0 s0 s0 s0  | bits8 s0 s1 s1 s1 s1 s1 s1 s0  => bits8 s1 s1 s0 s0 s0 s0 s1 s0  | bits8 s0 s1 s1 s1 s1 s1 s1 s1  => bits8 s1 s1 s0 s0 s1 s1 s0 s0  | bits8 s1 s0 s0 s0 s0 s0 s0 s0  => bits8 s0 s1 s0 s0 s0 s0 s0 s1  | bits8 s1 s0 s0 s0 s0 s0 s0 s1  => bits8 s0 s1 s0 s0 s1 s1 s1 s1  | bits8 s1 s0 s0 s0 s0 s0 s1 s0  => bits8 s0 s1 s0 s1 s1 s1 s0 s1  | bits8 s1 s0 s0 s0 s0 s0 s1 s1  => bits8 s0 s1 s0 s1 s0 s0 s1 s1  | bits8 s1 s0 s0 s0 s0 s1 s0 s0  => bits8 s0 s1 s1 s1 s1 s0 s0 s1  | bits8 s1 s0 s0 s0 s0 s1 s0 s1  => bits8 s0 s1 s1 s1 s0 s1 s1 s1  | bits8 s1 s0 s0 s0 s0 s1 s1 s0  => bits8 s0 s1 s1 s0 s0 s1 s0 s1  | bits8 s1 s0 s0 s0 s0 s1 s1 s1  => bits8 s0 s1 s1 s0 s1 s0 s1 s1  | bits8 s1 s0 s0 s0 s1 s0 s0 s0  => bits8 s0 s0 s1 s1 s0 s0 s0 s1  | bits8 s1 s0 s0 s0 s1 s0 s0 s1  => bits8 s0 s0 s1 s1 s1 s1 s1 s1  | bits8 s1 s0 s0 s0 s1 s0 s1 s0  => bits8 s0 s0 s1 s0 s1 s1 s0 s1  | bits8 s1 s0 s0 s0 s1 s0 s1 s1  => bits8 s0 s0 s1 s0 s0 s0 s1 s1  | bits8 s1 s0 s0 s0 s1 s1 s0 s0  => bits8 s0 s0 s0 s0 s1 s0 s0 s1  | bits8 s1 s0 s0 s0 s1 s1 s0 s1  => bits8 s0 s0 s0 s0 s0 s1 s1 s1  | bits8 s1 s0 s0 s0 s1 s1 s1 s0  => bits8 s0 s0 s0 s1 s0 s1 s0 s1  | bits8 s1 s0 s0 s0 s1 s1 s1 s1  => bits8 s0 s0 s0 s1 s1 s0 s1 s1  | bits8 s1 s0 s0 s1 s0 s0 s0 s0  => bits8 s1 s0 s1 s0 s0 s0 s0 s1  | bits8 s1 s0 s0 s1 s0 s0 s0 s1  => bits8 s1 s0 s1 s0 s1 s1 s1 s1  | bits8 s1 s0 s0 s1 s0 s0 s1 s0  => bits8 s1 s0 s1 s1 s1 s1 s0 s1  | bits8 s1 s0 s0 s1 s0 s0 s1 s1  => bits8 s1 s0 s1 s1 s0 s0 s1 s1  | bits8 s1 s0 s0 s1 s0 s1 s0 s0  => bits8 s1 s0 s0 s1 s1 s0 s0 s1  | bits8 s1 s0 s0 s1 s0 s1 s0 s1  => bits8 s1 s0 s0 s1 s0 s1 s1 s1  | bits8 s1 s0 s0 s1 s0 s1 s1 s0  => bits8 s1 s0 s0 s0 s0 s1 s0 s1  | bits8 s1 s0 s0 s1 s0 s1 s1 s1  => bits8 s1 s0 s0 s0 s1 s0 s1 s1  | bits8 s1 s0 s0 s1 s1 s0 s0 s0  => bits8 s1 s1 s0 s1 s0 s0 s0 s1  | bits8 s1 s0 s0 s1 s1 s0 s0 s1  => bits8 s1 s1 s0 s1 s1 s1 s1 s1  | bits8 s1 s0 s0 s1 s1 s0 s1 s0  => bits8 s1 s1 s0 s0 s1 s1 s0 s1  | bits8 s1 s0 s0 s1 s1 s0 s1 s1  => bits8 s1 s1 s0 s0 s0 s0 s1 s1  | bits8 s1 s0 s0 s1 s1 s1 s0 s0  => bits8 s1 s1 s1 s0 s1 s0 s0 s1  | bits8 s1 s0 s0 s1 s1 s1 s0 s1  => bits8 s1 s1 s1 s0 s0 s1 s1 s1  | bits8 s1 s0 s0 s1 s1 s1 s1 s0  => bits8 s1 s1 s1 s1 s0 s1 s0 s1  | bits8 s1 s0 s0 s1 s1 s1 s1 s1  => bits8 s1 s1 s1 s1 s1 s0 s1 s1  | bits8 s1 s0 s1 s0 s0 s0 s0 s0  => bits8 s1 s0 s0 s1 s1 s0 s1 s0  | bits8 s1 s0 s1 s0 s0 s0 s0 s1  => bits8 s1 s0 s0 s1 s0 s1 s0 s0  | bits8 s1 s0 s1 s0 s0 s0 s1 s0  => bits8 s1 s0 s0 s0 s0 s1 s1 s0  | bits8 s1 s0 s1 s0 s0 s0 s1 s1  => bits8 s1 s0 s0 s0 s1 s0 s0 s0  | bits8 s1 s0 s1 s0 s0 s1 s0 s0  => bits8 s1 s0 s1 s0 s0 s0 s1 s0  | bits8 s1 s0 s1 s0 s0 s1 s0 s1  => bits8 s1 s0 s1 s0 s1 s1 s0 s0  | bits8 s1 s0 s1 s0 s0 s1 s1 s0  => bits8 s1 s0 s1 s1 s1 s1 s1 s0  | bits8 s1 s0 s1 s0 s0 s1 s1 s1  => bits8 s1 s0 s1 s1 s0 s0 s0 s0  | bits8 s1 s0 s1 s0 s1 s0 s0 s0  => bits8 s1 s1 s1 s0 s1 s0 s1 s0  | bits8 s1 s0 s1 s0 s1 s0 s0 s1  => bits8 s1 s1 s1 s0 s0 s1 s0 s0  | bits8 s1 s0 s1 s0 s1 s0 s1 s0  => bits8 s1 s1 s1 s1 s0 s1 s1 s0  | bits8 s1 s0 s1 s0 s1 s0 s1 s1  => bits8 s1 s1 s1 s1 s1 s0 s0 s0  | bits8 s1 s0 s1 s0 s1 s1 s0 s0  => bits8 s1 s1 s0 s1 s0 s0 s1 s0  | bits8 s1 s0 s1 s0 s1 s1 s0 s1  => bits8 s1 s1 s0 s1 s1 s1 s0 s0  | bits8 s1 s0 s1 s0 s1 s1 s1 s0  => bits8 s1 s1 s0 s0 s1 s1 s1 s0  | bits8 s1 s0 s1 s0 s1 s1 s1 s1  => bits8 s1 s1 s0 s0 s0 s0 s0 s0  | bits8 s1 s0 s1 s1 s0 s0 s0 s0  => bits8 s0 s1 s1 s1 s1 s0 s1 s0  | bits8 s1 s0 s1 s1 s0 s0 s0 s1  => bits8 s0 s1 s1 s1 s0 s1 s0 s0  | bits8 s1 s0 s1 s1 s0 s0 s1 s0  => bits8 s0 s1 s1 s0 s0 s1 s1 s0  | bits8 s1 s0 s1 s1 s0 s0 s1 s1  => bits8 s0 s1 s1 s0 s1 s0 s0 s0  | bits8 s1 s0 s1 s1 s0 s1 s0 s0  => bits8 s0 s1 s0 s0 s0 s0 s1 s0  | bits8 s1 s0 s1 s1 s0 s1 s0 s1  => bits8 s0 s1 s0 s0 s1 s1 s0 s0  | bits8 s1 s0 s1 s1 s0 s1 s1 s0  => bits8 s0 s1 s0 s1 s1 s1 s1 s0  | bits8 s1 s0 s1 s1 s0 s1 s1 s1  => bits8 s0 s1 s0 s1 s0 s0 s0 s0  | bits8 s1 s0 s1 s1 s1 s0 s0 s0  => bits8 s0 s0 s0 s0 s1 s0 s1 s0  | bits8 s1 s0 s1 s1 s1 s0 s0 s1  => bits8 s0 s0 s0 s0 s0 s1 s0 s0  | bits8 s1 s0 s1 s1 s1 s0 s1 s0  => bits8 s0 s0 s0 s1 s0 s1 s1 s0  | bits8 s1 s0 s1 s1 s1 s0 s1 s1  => bits8 s0 s0 s0 s1 s1 s0 s0 s0  | bits8 s1 s0 s1 s1 s1 s1 s0 s0  => bits8 s0 s0 s1 s1 s0 s0 s1 s0  | bits8 s1 s0 s1 s1 s1 s1 s0 s1  => bits8 s0 s0 s1 s1 s1 s1 s0 s0  | bits8 s1 s0 s1 s1 s1 s1 s1 s0  => bits8 s0 s0 s1 s0 s1 s1 s1 s0  | bits8 s1 s0 s1 s1 s1 s1 s1 s1  => bits8 s0 s0 s1 s0 s0 s0 s0 s0  | bits8 s1 s1 s0 s0 s0 s0 s0 s0  => bits8 s1 s1 s1 s0 s1 s1 s0 s0  | bits8 s1 s1 s0 s0 s0 s0 s0 s1  => bits8 s1 s1 s1 s0 s0 s0 s1 s0  | bits8 s1 s1 s0 s0 s0 s0 s1 s0  => bits8 s1 s1 s1 s1 s0 s0 s0 s0  | bits8 s1 s1 s0 s0 s0 s0 s1 s1  => bits8 s1 s1 s1 s1 s1 s1 s1 s0  | bits8 s1 s1 s0 s0 s0 s1 s0 s0  => bits8 s1 s1 s0 s1 s0 s1 s0 s0  | bits8 s1 s1 s0 s0 s0 s1 s0 s1  => bits8 s1 s1 s0 s1 s1 s0 s1 s0  | bits8 s1 s1 s0 s0 s0 s1 s1 s0  => bits8 s1 s1 s0 s0 s1 s0 s0 s0  | bits8 s1 s1 s0 s0 s0 s1 s1 s1  => bits8 s1 s1 s0 s0 s0 s1 s1 s0  | bits8 s1 s1 s0 s0 s1 s0 s0 s0  => bits8 s1 s0 s0 s1 s1 s1 s0 s0  | bits8 s1 s1 s0 s0 s1 s0 s0 s1  => bits8 s1 s0 s0 s1 s0 s0 s1 s0  | bits8 s1 s1 s0 s0 s1 s0 s1 s0  => bits8 s1 s0 s0 s0 s0 s0 s0 s0  | bits8 s1 s1 s0 s0 s1 s0 s1 s1  => bits8 s1 s0 s0 s0 s1 s1 s1 s0  | bits8 s1 s1 s0 s0 s1 s1 s0 s0  => bits8 s1 s0 s1 s0 s0 s1 s0 s0  | bits8 s1 s1 s0 s0 s1 s1 s0 s1  => bits8 s1 s0 s1 s0 s1 s0 s1 s0  | bits8 s1 s1 s0 s0 s1 s1 s1 s0  => bits8 s1 s0 s1 s1 s1 s0 s0 s0  | bits8 s1 s1 s0 s0 s1 s1 s1 s1  => bits8 s1 s0 s1 s1 s0 s1 s1 s0  | bits8 s1 s1 s0 s1 s0 s0 s0 s0  => bits8 s0 s0 s0 s0 s1 s1 s0 s0  | bits8 s1 s1 s0 s1 s0 s0 s0 s1  => bits8 s0 s0 s0 s0 s0 s0 s1 s0  | bits8 s1 s1 s0 s1 s0 s0 s1 s0  => bits8 s0 s0 s0 s1 s0 s0 s0 s0  | bits8 s1 s1 s0 s1 s0 s0 s1 s1  => bits8 s0 s0 s0 s1 s1 s1 s1 s0  | bits8 s1 s1 s0 s1 s0 s1 s0 s0  => bits8 s0 s0 s1 s1 s0 s1 s0 s0  | bits8 s1 s1 s0 s1 s0 s1 s0 s1  => bits8 s0 s0 s1 s1 s1 s0 s1 s0  | bits8 s1 s1 s0 s1 s0 s1 s1 s0  => bits8 s0 s0 s1 s0 s1 s0 s0 s0  | bits8 s1 s1 s0 s1 s0 s1 s1 s1  => bits8 s0 s0 s1 s0 s0 s1 s1 s0  | bits8 s1 s1 s0 s1 s1 s0 s0 s0  => bits8 s0 s1 s1 s1 s1 s1 s0 s0  | bits8 s1 s1 s0 s1 s1 s0 s0 s1  => bits8 s0 s1 s1 s1 s0 s0 s1 s0  | bits8 s1 s1 s0 s1 s1 s0 s1 s0  => bits8 s0 s1 s1 s0 s0 s0 s0 s0  | bits8 s1 s1 s0 s1 s1 s0 s1 s1  => bits8 s0 s1 s1 s0 s1 s1 s1 s0  | bits8 s1 s1 s0 s1 s1 s1 s0 s0  => bits8 s0 s1 s0 s0 s0 s1 s0 s0  | bits8 s1 s1 s0 s1 s1 s1 s0 s1  => bits8 s0 s1 s0 s0 s1 s0 s1 s0  | bits8 s1 s1 s0 s1 s1 s1 s1 s0  => bits8 s0 s1 s0 s1 s1 s0 s0 s0  | bits8 s1 s1 s0 s1 s1 s1 s1 s1  => bits8 s0 s1 s0 s1 s0 s1 s1 s0  | bits8 s1 s1 s1 s0 s0 s0 s0 s0  => bits8 s0 s0 s1 s1 s0 s1 s1 s1  | bits8 s1 s1 s1 s0 s0 s0 s0 s1  => bits8 s0 s0 s1 s1 s1 s0 s0 s1  | bits8 s1 s1 s1 s0 s0 s0 s1 s0  => bits8 s0 s0 s1 s0 s1 s0 s1 s1  | bits8 s1 s1 s1 s0 s0 s0 s1 s1  => bits8 s0 s0 s1 s0 s0 s1 s0 s1  | bits8 s1 s1 s1 s0 s0 s1 s0 s0  => bits8 s0 s0 s0 s0 s1 s1 s1 s1  | bits8 s1 s1 s1 s0 s0 s1 s0 s1  => bits8 s0 s0 s0 s0 s0 s0 s0 s1  | bits8 s1 s1 s1 s0 s0 s1 s1 s0  => bits8 s0 s0 s0 s1 s0 s0 s1 s1  | bits8 s1 s1 s1 s0 s0 s1 s1 s1  => bits8 s0 s0 s0 s1 s1 s1 s0 s1  | bits8 s1 s1 s1 s0 s1 s0 s0 s0  => bits8 s0 s1 s0 s0 s0 s1 s1 s1  | bits8 s1 s1 s1 s0 s1 s0 s0 s1  => bits8 s0 s1 s0 s0 s1 s0 s0 s1  | bits8 s1 s1 s1 s0 s1 s0 s1 s0  => bits8 s0 s1 s0 s1 s1 s0 s1 s1  | bits8 s1 s1 s1 s0 s1 s0 s1 s1  => bits8 s0 s1 s0 s1 s0 s1 s0 s1  | bits8 s1 s1 s1 s0 s1 s1 s0 s0  => bits8 s0 s1 s1 s1 s1 s1 s1 s1  | bits8 s1 s1 s1 s0 s1 s1 s0 s1  => bits8 s0 s1 s1 s1 s0 s0 s0 s1  | bits8 s1 s1 s1 s0 s1 s1 s1 s0  => bits8 s0 s1 s1 s0 s0 s0 s1 s1  | bits8 s1 s1 s1 s0 s1 s1 s1 s1  => bits8 s0 s1 s1 s0 s1 s1 s0 s1  | bits8 s1 s1 s1 s1 s0 s0 s0 s0  => bits8 s1 s1 s0 s1 s0 s1 s1 s1  | bits8 s1 s1 s1 s1 s0 s0 s0 s1  => bits8 s1 s1 s0 s1 s1 s0 s0 s1  | bits8 s1 s1 s1 s1 s0 s0 s1 s0  => bits8 s1 s1 s0 s0 s1 s0 s1 s1  | bits8 s1 s1 s1 s1 s0 s0 s1 s1  => bits8 s1 s1 s0 s0 s0 s1 s0 s1  | bits8 s1 s1 s1 s1 s0 s1 s0 s0  => bits8 s1 s1 s1 s0 s1 s1 s1 s1  | bits8 s1 s1 s1 s1 s0 s1 s0 s1  => bits8 s1 s1 s1 s0 s0 s0 s0 s1  | bits8 s1 s1 s1 s1 s0 s1 s1 s0  => bits8 s1 s1 s1 s1 s0 s0 s1 s1  | bits8 s1 s1 s1 s1 s0 s1 s1 s1  => bits8 s1 s1 s1 s1 s1 s1 s0 s1  | bits8 s1 s1 s1 s1 s1 s0 s0 s0  => bits8 s1 s0 s1 s0 s0 s1 s1 s1  | bits8 s1 s1 s1 s1 s1 s0 s0 s1  => bits8 s1 s0 s1 s0 s1 s0 s0 s1  | bits8 s1 s1 s1 s1 s1 s0 s1 s0  => bits8 s1 s0 s1 s1 s1 s0 s1 s1  | bits8 s1 s1 s1 s1 s1 s0 s1 s1  => bits8 s1 s0 s1 s1 s0 s1 s0 s1  | bits8 s1 s1 s1 s1 s1 s1 s0 s0  => bits8 s1 s0 s0 s1 s1 s1 s1 s1  | bits8 s1 s1 s1 s1 s1 s1 s0 s1  => bits8 s1 s0 s0 s1 s0 s0 s0 s1  | bits8 s1 s1 s1 s1 s1 s1 s1 s0  => bits8 s1 s0 s0 s0 s0 s0 s1 s1  | bits8 s1 s1 s1 s1 s1 s1 s1 s1  => bits8 s1 s0 s0 s0 s1 s1 s0 s1  end
 | _ => bits8 s0 s0 s0 s0 s0 s0 s0 s0
-  end.
+  end. *)
 
-Notation "A GF* B" := (GF_mul_table A B) (at level 75, right associativity).
+Definition GF_double (a : byte) :=
+match a with 
+    | bits8 s1 _ _ _ _ _ _ _ => (byte_shift_left a) X*OR (bits8 s0 s0 s0 s1 s1 s0 s1 s1)
+    | _ => (byte_shift_left a)
+end.
 
+
+Definition GF_mul_constant (a : byte) (n :nat) : byte :=
+match n with 
+| 0 => bits8 s0 s0 s0 s0 s0 s0 s0 s0
+| 1 => a
+| 2 => GF_double a
+| 3 => (GF_double a) X*OR a
+| 9 => (GF_double (GF_double (GF_double a))) X*OR a
+| 11 => (GF_double (GF_double (GF_double a))) X*OR (GF_double a) X*OR a
+| 13 => (GF_double (GF_double (GF_double a))) X*OR (GF_double (GF_double a)) X*OR a
+| 14 => (GF_double (GF_double (GF_double a))) X*OR (GF_double (GF_double a)) X*OR (GF_double a)
+| _ => bits8 s0 s0 s0 s0 s0 s0 s0 s0 
+end.
+
+Definition GF_mul_2constant (a : nat) (n :nat) : nat :=
+byte_to_nat (GF_mul_constant (nat_to_byte a) n).
+
+Definition GF_mul_2byte (a : byte) (n :byte) : byte :=
+GF_mul_constant a (byte_to_nat n).
+
+Example test_GF_mul_byte: 
+(GF_mul_constant  (nat_to_byte 14) 9) = 
+nat_to_byte 126.
+Proof.
+unfold nat_to_byte. unfold GF_mul_constant. simpl. reflexivity.
+Qed.
+
+Notation "A GF* B" := (GF_mul_constant A B) (at level 75, right associativity).
+Notation "A GF** B" := (GF_mul_2constant A B) (at level 75, right associativity).
+Notation "A GFB** B" := (GF_mul_2byte A B) (at level 75, right associativity).
 
 Inductive word : Type :=
 | bytes4 (b0 b1 b2 b3: byte)
@@ -2038,6 +2334,208 @@ Qed.
 Proof.
 simpl. reflexivity.
 Qed.
+
+Theorem mc_inv_mc_row: forall b0 b1 b2 b3:byte,
+((GF_double (GF_double (GF_double (GF_double b0 X*OR (GF_double b1 X*OR b1) X*OR b2 X*OR b3)))
+    X*OR GF_double (GF_double (GF_double b0 X*OR (GF_double b1 X*OR b1) X*OR b2 X*OR b3))
+         X*OR GF_double (GF_double b0 X*OR (GF_double b1 X*OR b1) X*OR b2 X*OR b3))
+   X*OR (GF_double (GF_double (GF_double (b0 X*OR GF_double b1 X*OR (GF_double b2 X*OR b2) X*OR b3)))
+         X*OR GF_double (b0 X*OR GF_double b1 X*OR (GF_double b2 X*OR b2) X*OR b3)
+              X*OR b0 X*OR GF_double b1 X*OR (GF_double b2 X*OR b2) X*OR b3)
+        X*OR (GF_double (GF_double (GF_double (b0 X*OR b1 X*OR GF_double b2 X*OR GF_double b3 X*OR b3)))
+              X*OR GF_double (GF_double (b0 X*OR b1 X*OR GF_double b2 X*OR GF_double b3 X*OR b3))
+                   X*OR b0 X*OR b1 X*OR GF_double b2 X*OR GF_double b3 X*OR b3)
+             X*OR GF_double (GF_double (GF_double ((GF_double b0 X*OR b0) X*OR b1 X*OR b2 X*OR GF_double b3)))
+                  X*OR (GF_double b0 X*OR b0) X*OR b1 X*OR b2 X*OR GF_double b3) = b0.
+Proof.
+intros. 
+  
+  unfold GF_double. 
+  
+ 
+Abort.
+
+
+
+Theorem gf_double_dist: forall b0 b1: byte,
+(GF_double (b0 X*OR b1)) = ((GF_double b0) X*OR (GF_double b1)).
+Proof.
+intros. destruct b0. destruct b1. unfold xor_bytes. destruct (GF_double (bits8 b0 b2 b3 b4 b5 b6 b7 b8)) eqn:EQ0.
+destruct (GF_double (bits8 b1 b9 b10 b11 b12 b13 b14 b15)) eqn:EQ1. unfold GF_double. destruct (xor_bits b0 b1).
+unfold byte_shift_left. unfold GF_double in EQ0. unfold byte_shift_left in EQ0. unfold xor_bytes in EQ0. simpl in EQ0.
+destruct b0. inversion EQ0. 
+unfold GF_double in EQ1. unfold byte_shift_left in EQ1. unfold xor_bytes in EQ1. simpl in EQ1. destruct b1. inversion EQ1.
+reflexivity. unfold GF_double in EQ1. unfold byte_shift_left in EQ1. unfold xor_bytes in EQ1. simpl in EQ1.
+inversion EQ1. destruct b9. simpl. destruct b10. simpl. destruct b11. simpl. destruct b12. simpl.
+destruct b13. simpl. destruct b14. simpl. destruct b15. simpl. destruct b16. simpl. destruct b17. simpl.
+destruct b18. simpl. destruct b19. simpl. destruct b20. simpl. destruct b21. simpl. destruct b22. simpl. 
+
+Abort.
+
+Definition mix_colums_matrix : state := 
+
+bytes16 (nat_to_byte 2) (nat_to_byte 3) (nat_to_byte 1) (nat_to_byte 1) 
+        (nat_to_byte 1) (nat_to_byte 2) (nat_to_byte 3) (nat_to_byte 1)
+        (nat_to_byte 1) (nat_to_byte 1) (nat_to_byte 2) (nat_to_byte 3)
+        (nat_to_byte 3) (nat_to_byte 1) (nat_to_byte 1) (nat_to_byte 2).
+
+Definition inv_mix_colums_matrix : state  := 
+
+bytes16 (nat_to_byte 14) (nat_to_byte 11) (nat_to_byte 13) (nat_to_byte 9) 
+        (nat_to_byte 9) (nat_to_byte 14) (nat_to_byte 11) (nat_to_byte 13)
+        (nat_to_byte 13) (nat_to_byte 9) (nat_to_byte 14) (nat_to_byte 11)
+        (nat_to_byte 11) (nat_to_byte 13) (nat_to_byte 9) (nat_to_byte 14).
+
+Definition state_select_r (a:state) (n:nat): word := 
+match a with 
+| bytes16 r0c0 r0c1 r0c2 r0c3
+            r1c0 r1c1 r1c2 r1c3
+            r2c0 r2c1 r2c2 r2c3
+            r3c0 r3c1 r3c2 r3c3 => 
+            match n with
+            | 0 => bytes4 r0c0 r0c1 r0c2 r0c3
+            | 1 => bytes4 r1c0 r1c1 r1c2 r1c3
+            | 2 => bytes4 r2c0 r2c1 r2c2 r2c3
+            | 3 => bytes4 r3c0 r3c1 r3c2 r3c3
+            | _ => bytes4 r0c0 r0c1 r0c2 r0c3
+            end
+end.
+
+Definition state_select_c (a:state) (n:nat): word := 
+match a with 
+| bytes16 r0c0 r0c1 r0c2 r0c3
+            r1c0 r1c1 r1c2 r1c3
+            r2c0 r2c1 r2c2 r2c3
+            r3c0 r3c1 r3c2 r3c3 => 
+            match n with
+            | 0 => bytes4 r0c0 r1c0 r2c0 r3c0
+            | 1 => bytes4 r0c1 r1c1 r2c1 r3c1
+            | 2 => bytes4 r0c2 r1c2 r2c2 r3c2
+            | 3 => bytes4 r0c3 r1c3 r2c3 r3c3
+            | _ => bytes4 r0c0 r1c0 r2c0 r3c0
+            end
+end.
+
+
+Definition gf_dot (a b :word) : byte :=
+match a with
+| bytes4 a0 a1 a2 a3 =>
+  match b with
+  | bytes4 b0 b1 b2 b3 => 
+   (b0 GFB** a0) X*OR (b1 GFB** a1) X*OR (b2 GFB** a2) X*OR (b3 GFB** a3)
+  end
+end.
+
+Notation "A [ n ]" := (state_select_r A n) (at level 70, right associativity).
+Notation "A T[ n ]" := (state_select_c A n) (at level 70, right associativity).
+Notation "A d*t B" := (gf_dot A B) (at level 75, right associativity).
+
+ Definition gf_mat_mul (a b :state) : state :=
+
+bytes16 (a [ 0 ] d*t (b T[ 0 ])) (a [ 0 ] d*t b T[ 1 ]) (a [ 0 ] d*t b T[ 2 ]) (a [ 0 ] d*t b T[ 3 ]) 
+        (a [ 1 ] d*t b T[ 0 ]) (a [ 1 ] d*t b T[ 1 ]) (a [ 1 ] d*t b T[ 2 ]) (a [ 1 ] d*t b T[ 3 ]) 
+        (a [ 2 ] d*t b T[ 0 ]) (a [ 2 ] d*t b T[ 1 ]) (a [ 2 ] d*t b T[ 2 ]) (a [ 2 ] d*t b T[ 3 ]) 
+        (a [ 3 ] d*t b T[ 0 ]) (a [ 3 ] d*t b T[ 1 ]) (a [ 3 ] d*t b T[ 2 ]) (a [ 3 ] d*t b T[ 3 ]) 
+. 
+
+
+Definition mix_columns2 (s: state) : state :=
+  (gf_mat_mul mix_colums_matrix s).
+
+
+
+Definition inv_mix_columns2 (s: state) : state :=
+  (gf_mat_mul inv_mix_colums_matrix s).
+
+
+Example test_dot_1:
+(bytes4 (bits8 s0 s0 s0 s0 s0 s0 s1 s1) (bits8 s0 s0 s0 s0 s0 s0 s0 s1)
+     (bits8 s0 s0 s0 s0 s0 s0 s0 s1) (bits8 s0 s0 s0 s0 s0 s0 s1 s0)
+   d*t bytes4 (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0)
+         (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s1)) = (bits8 s0 s0 s0 s0 s0 s0 s1 s0).
+Proof.
+simpl. reflexivity.
+Qed.
+
+ Example test_mix_columns2_1: 
+(mix_columns2 (bytes16 
+  (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0)
+  (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0)
+  (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0)
+  (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s1))) = 
+(bytes16 
+  (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s1)
+  (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s1)
+  (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s1 s1)
+  (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s1 s0)).
+Proof.
+
+unfold mix_columns2. unfold mix_colums_matrix. simpl. unfold gf_mat_mul.  simpl. reflexivity.
+Qed.
+
+
+ Example test_inv_mix_columns2_2: 
+(inv_mix_columns2 (bytes16 
+  (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s1)
+  (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s1)
+  (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s1 s1)
+  (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s1 s0))) = 
+(bytes16 
+  (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0)
+  (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0)
+  (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0)
+  (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s0) (bits8 s0 s0 s0 s0 s0 s0 s0 s1)).
+Proof.
+unfold mix_columns2. unfold mix_colums_matrix. simpl. unfold gf_mat_mul.  simpl. reflexivity.
+Qed.
+
+
+Theorem matrix_assoc: forall s:state,
+(gf_mat_mul inv_mix_colums_matrix (gf_mat_mul mix_colums_matrix s)) = gf_mat_mul (gf_mat_mul inv_mix_colums_matrix mix_colums_matrix) s.
+Proof.
+intros.
+unfold inv_mix_colums_matrix. unfold mix_colums_matrix. unfold gf_mat_mul. simpl. unfold GF_mul_2byte. 
+destruct (s T[ 0]). destruct (s T[ 1]). destruct (s T[ 2]). destruct (s T[ 3]). unfold byte_to_nat.
+Abort.
+
+Theorem mc_inv_mc2: forall s: state,
+    inv_mix_columns2 (mix_columns2 (s)) = s.
+Proof.
+
+unfold mix_columns2. unfold inv_mix_columns2.
+Abort. 
+
+  
+  Theorem gf_dist: forall (b0 b1 b2 b3: byte),
+ ((((b0 GF* 2) X*OR (b1 GF* 3) X*OR b2 X*OR b3) GF* 14)) = 
+(((b0 GF* (2 GF** 14)) X*OR (b1 GF* (3 GF** 14)) X*OR (b2 GF* 14) X*OR (b3 GF* 14))).
+Proof.
+intros. induction b0.
+
+
+ unfold GF_mul_2constant. unfold nat_to_byte.  unfold GF_mul_constant.  
+
+
+ unfold GF_mul_constant. simpl. destruct ((GF_double (GF_double (GF_double b2)) X*OR GF_double (GF_double b2) X*OR GF_double b2)
+    X*OR GF_double (GF_double (GF_double b3)) X*OR GF_double (GF_double b3) X*OR GF_double b3).
+ destruct (byte_to_nat (nat_to_byte 2 GF* 0)). simpl. reflexivity. destruct n. simpl. reflexivity.
+Qed.
+Theorem mc_test: forall b: byte,
+((b GF* 2) X*OR (b GF* 3) X*OR (b GF* 9)) = (b GF* 14).
+Proof.
+intros. destruct b. 
+destruct b0. destruct b1. destruct b2. destruct b3.
+ destruct b4. destruct b5. destruct b6. destruct b7. reflexivity. reflexivity.
+Qed.
+
+Theorem mc_inv_mc_col: forall w: word,
+    inv_mix_state_column (mix_state_column w) = w.
+Proof.  
+intros. unfold inv_mix_state_column. unfold mix_state_column. destruct w eqn:EQ0.
+
+ simpl. unfold GF_double. unfold xor_bytes. unfold xor_bits.
+Qed.
+
 
 
 
