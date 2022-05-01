@@ -28,10 +28,7 @@ Definition ls_nibble (b:byte) : nibble :=
 
 Definition xor_bits (b1 b2: bit) : bit :=
   match b1 with
-  | s0 => match b2 with
-          | s0 => s0
-          | s1 => s1
-          end
+  | s0 => b2
   | s1 => match b2 with
           | s0 => s1
           | s1 => s0
@@ -40,10 +37,8 @@ Definition xor_bits (b1 b2: bit) : bit :=
          
 Definition xor_bytes (b a: byte) : byte :=
   match b with
-  | bits8 s0 s0 s0 s0 s0 s0 s0 s0 => a
   | bits8 b7 b6 b5 b4 b3 b2 b1 b0 =>
       match a with
-      | bits8 s0 s0 s0 s0 s0 s0 s0 s0 => b
       | bits8 a7 a6 a5 a4 a3 a2 a1 a0 =>
           bits8 (xor_bits b7 a7) (xor_bits b6 a6) (xor_bits b5 a5) (xor_bits b4 a4) (xor_bits b3 a3) (xor_bits b2 a2) (xor_bits b1 a1) (xor_bits b0 a0)
       end
@@ -2439,6 +2434,8 @@ bytes16 (a [ 0 ] d*t (b T[ 0 ])) (a [ 0 ] d*t b T[ 1 ]) (a [ 0 ] d*t b T[ 2 ]) (
 . 
 
 
+
+
 Definition mix_columns2 (s: state) : state :=
   (gf_mat_mul mix_colums_matrix s).
 
@@ -2489,7 +2486,84 @@ Proof.
 unfold mix_columns2. unfold mix_colums_matrix. simpl. unfold gf_mat_mul.  simpl. reflexivity.
 Qed.
 
+Theorem nat_one_dist: forall (n : nat),
+(nat_to_byte (S n)) = (nat_to_byte(1) X*OR nat_to_byte(n)).
+Proof.
+intros.
+simpl. destruct n.
+Qed.
 
+ Theorem xor_bits_commute: forall (b0 b1: bit),
+(xor_bits b0 b1) = (xor_bits b1  b0).
+Proof.
+intros. destruct b0. destruct b1. reflexivity. reflexivity. destruct b1. reflexivity.  reflexivity. 
+Qed.
+(*
+Theorem xor_commute: forall (b0 b1: byte),
+(b0 X*OR b1) = (b1 X*OR b0).
+Proof.
+intros. destruct b0. destruct b1. unfold xor_bytes. rewrite -> xor_bits_commute. reflexivity.
+Qed. *)
+Theorem xor_0_right: forall (b: byte),
+(b X*OR nat_to_byte 0) = (b).
+Proof.
+intros. simpl. unfold xor_bytes. destruct b. simpl. 
+rewrite -> xor_bits_commute. simpl. rewrite -> xor_bits_commute. simpl. rewrite -> xor_bits_commute. simpl. rewrite -> xor_bits_commute. simpl. 
+rewrite -> xor_bits_commute. simpl. rewrite -> xor_bits_commute. simpl. rewrite -> xor_bits_commute. simpl. rewrite -> xor_bits_commute. simpl. 
+reflexivity.
+Qed.
+
+
+Theorem xor_0_left: forall (b: byte),
+(nat_to_byte 0 X*OR b) = (b).
+Proof.
+intros. simpl.  destruct b. reflexivity.
+Qed.
+
+Theorem xor_0_left2: forall (n: nat),
+(nat_to_byte 0 X*OR nat_to_byte n) = (nat_to_byte n).
+Proof.
+intros. simpl.  destruct (nat_to_byte n). reflexivity.
+Qed.
+
+Theorem gf_mul_0_nat: forall (n:nat),
+(nat_to_byte 0 GF* 14) = (nat_to_byte 0).
+Proof.
+intros. 
+simpl. reflexivity.
+Qed.
+Theorem gf_mul_distr: forall (n0 n1: nat),
+((nat_to_byte n0 X*OR nat_to_byte n1) GF* 14) = ((nat_to_byte n0 GF* 14) X*OR (nat_to_byte n1 GF* 14)).
+Proof.
+induction n0 as [| n' IHn']. 
+induction n1 as [| n1' IHn1']. simpl. reflexivity. rewrite -> xor_0_left2. rewrite -> gf_mul_0_nat.
+destruct (nat_to_byte (S n1') GF* 14). simpl. reflexivity. assumption. 
+
+destruct b0. destruct b8. 
+
+destruct b0. destruct b1. destruct b2. destruct b3. destruct b4. destruct b5. destruct b6.  destruct b7. destruct b8.  
+destruct b9. destruct b10. destruct b11. destruct b12. destruct b13. destruct b14. destruct b15.  reflexivity. reflexivity. 
+reflexivity. reflexivity. reflexivity. reflexivity. reflexivity. reflexivity. reflexivity. destruct b15. unfold xor_bytes. unfold xor_bits. destruct b14. destruct b13.
+ destruct b12. destruct b11. destruct b10. destruct b9. destruct b8. reflexivity. reflexivity. simpl. destruct b8. reflexivity. reflexivity. destruct b. 
+unfold GF_mul_constant. unfold xor_bytes.
+
+Qed.
+
+
+Theorem gf_mul_distr: forall (b0 b1: byte),
+((b0 X*OR b1) GF* 14) = ((b0 GF* 14) X*OR (b1 GF* 14)).
+Proof.
+
+destruct b0. destruct b8. 
+
+destruct b0. destruct b1. destruct b2. destruct b3. destruct b4. destruct b5. destruct b6.  destruct b7. destruct b8.  
+destruct b9. destruct b10. destruct b11. destruct b12. destruct b13. destruct b14. destruct b15.  reflexivity. reflexivity. 
+reflexivity. reflexivity. reflexivity. reflexivity. reflexivity. reflexivity. reflexivity. destruct b15. unfold xor_bytes. unfold xor_bits. destruct b14. destruct b13.
+ destruct b12. destruct b11. destruct b10. destruct b9. destruct b8. reflexivity. reflexivity. simpl. destruct b8. reflexivity. reflexivity. destruct b. 
+unfold GF_mul_constant. unfold xor_bytes.
+
+Qed.
+ 
 Theorem matrix_assoc: forall s:state,
 (gf_mat_mul inv_mix_colums_matrix (gf_mat_mul mix_colums_matrix s)) = gf_mat_mul (gf_mat_mul inv_mix_colums_matrix mix_colums_matrix) s.
 Proof.
