@@ -1,6 +1,3 @@
-(*Require Import Coq.Init.Byte.*)
-Require Import Program.
-Require Import Nat.
 Inductive bit : Type :=
 | s0
 | s1
@@ -1368,7 +1365,7 @@ Proof.
   unfold "01 GF* s".
   reflexivity.
 Qed.
-(*
+
 Theorem distr_gf_01_four: forall a b c d: byte,
     (01 GF* (a X*OR b X*OR c X*OR d)) = ((01 GF* a) X*OR (01 GF* b) X*OR (01 GF* c) X*OR (01 GF* d)).
 Proof.
@@ -1376,7 +1373,7 @@ Proof.
   unfold "01 GF* s".
   reflexivity.
 Qed.
-*)
+
 Theorem xtime_distr: forall a b: byte,
     (xtime (a X*OR b)) = ((xtime a) X*OR (xtime b)).
 Proof.
@@ -1426,7 +1423,7 @@ Proof.
   rewrite xtime_distr.
   reflexivity.
 Qed.
-(*
+
 Theorem distr_gf_02_four: forall a b c d: byte,
     (02 GF* (a X*OR b X*OR c X*OR d)) = ((02 GF* a) X*OR (02 GF* b) X*OR (02 GF* c) X*OR (02 GF* d)).
 Proof.
@@ -1451,7 +1448,7 @@ Proof.
   rewrite H0.
   reflexivity.
 Qed.  
- *)
+
 Theorem distr_gf_09_four: forall a b c d: byte,
     (09 GF* (a X*OR b X*OR c X*OR d)) = ((09 GF* a) X*OR (09 GF* b) X*OR (09 GF* c) X*OR (09 GF* d)).
 Proof.
@@ -1771,17 +1768,7 @@ Theorem rc_inv_inv : forall (i : round),
   rc_inv (rc i) = i.
 Proof.
   intros i.
-  destruct i.
-  - reflexivity.
-  - reflexivity.
-  - reflexivity.
-  - reflexivity.
-  - reflexivity.
-  - reflexivity.
-  - reflexivity.
-  - reflexivity.
-  - reflexivity.
-  - reflexivity.
+  destruct i; (reflexivity).
 Qed.
 
 
@@ -1798,17 +1785,7 @@ Theorem rcon_inv_inv : forall (i : round),
   rcon_inv (rcon i) = i.
 Proof.
   intros i.
-  destruct i.
-  - reflexivity.
-  - reflexivity.
-  - reflexivity.
-  - reflexivity.
-  - reflexivity.
-  - reflexivity.
-  - reflexivity.
-  - reflexivity.
-  - reflexivity.
-  - reflexivity.
+  destruct i; (reflexivity).
 Qed.
 
 
@@ -1858,17 +1835,7 @@ Proof.
   intros i w.
   unfold rcon_word.
   unfold rcon.
-  destruct i.
-  - simpl. rewrite xor_xor_words'. reflexivity.
-  - simpl. rewrite xor_xor_words'. reflexivity.
-  - simpl. rewrite xor_xor_words'. reflexivity.
-  - simpl. rewrite xor_xor_words'. reflexivity.
-  - simpl. rewrite xor_xor_words'. reflexivity.
-  - simpl. rewrite xor_xor_words'. reflexivity.
-  - simpl. rewrite xor_xor_words'. reflexivity.
-  - simpl. rewrite xor_xor_words'. reflexivity.
-  - simpl. rewrite xor_xor_words'. reflexivity.
-  - simpl. rewrite xor_xor_words'. reflexivity.
+  destruct i; (simpl; rewrite xor_xor_words'; reflexivity).
 Qed.
 
 Definition rot_word (w: word) : word :=
