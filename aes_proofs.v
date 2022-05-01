@@ -763,50 +763,38 @@ Theorem sbytes_inv_sbytes: forall state: matrix,
 Proof.
   intros s.
   destruct s.
-  - simpl.
-    rewrite sbox_inv_sbox.
-    rewrite sbox_inv_sbox.
-    rewrite sbox_inv_sbox.
-    rewrite sbox_inv_sbox.
-    rewrite sbox_inv_sbox.
-    rewrite sbox_inv_sbox.
-    rewrite sbox_inv_sbox.
-    rewrite sbox_inv_sbox.
-    rewrite sbox_inv_sbox.
-    rewrite sbox_inv_sbox.
-    rewrite sbox_inv_sbox.
-    rewrite sbox_inv_sbox.
-    rewrite sbox_inv_sbox.
-    rewrite sbox_inv_sbox.
-    rewrite sbox_inv_sbox.
-    rewrite sbox_inv_sbox.
-    reflexivity.
+  simpl.
+  rewrite sbox_inv_sbox.
+  rewrite sbox_inv_sbox.
+  rewrite sbox_inv_sbox.
+  rewrite sbox_inv_sbox.
+  rewrite sbox_inv_sbox.
+  rewrite sbox_inv_sbox.
+  rewrite sbox_inv_sbox.
+  rewrite sbox_inv_sbox.
+  rewrite sbox_inv_sbox.
+  rewrite sbox_inv_sbox.
+  rewrite sbox_inv_sbox.
+  rewrite sbox_inv_sbox.
+  rewrite sbox_inv_sbox.
+  rewrite sbox_inv_sbox.
+  rewrite sbox_inv_sbox.
+  rewrite sbox_inv_sbox.
+  reflexivity.
 Qed.
 
 Theorem xor_xor_bit: forall b' b: bit,
     xor_bits b' (xor_bits b' b) = b.
 Proof.
   intros b' b.
-  destruct b.
-  - destruct b'.
-    + reflexivity.
-    + reflexivity.
-  - destruct b'.
-    + reflexivity.
-    + reflexivity.
+  destruct b; (destruct b'; (reflexivity)).
 Qed.
 
 Theorem xor_xor_bit' : forall b' b : bit,
   xor_bits (xor_bits b b') b' = b.
 Proof.
   intros b' b.
-  destruct b.
-  - destruct b'.
-    + reflexivity.
-    + reflexivity.
-  - destruct b'.
-    + reflexivity.
-    + reflexivity.
+  destruct b; (destruct b'; (reflexivity)).
 Qed.
 
 Theorem xor_xor_byte: forall b' b: byte,
@@ -844,10 +832,6 @@ Proof.
   rewrite xor_xor_bit'.
   reflexivity.
 Qed.
-  
-
-
-(*TODO: mix_columns, inv_mix_columns, mc_inv_mc*)
 
 Definition xtime (b: byte) : byte :=
   match b with
@@ -2278,3 +2262,7 @@ Proof.
     rewrite xor_xor_matrix.
     rewrite Hm. reflexivity.
 Qed.
+
+From Coq Require Import Extraction.
+Extraction "extracted/encryption.ml" enc_aes_cbc.
+Extraction "extracted/decryption.ml" dec_aes_cbc.
