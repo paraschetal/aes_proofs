@@ -1405,25 +1405,175 @@ Proof.
   reflexivity.
 Qed.  
 
+
+
+Theorem flatten_xor: forall a b c d: byte,
+((a X*OR b) X*OR (c X*OR d)) = (a X*OR b X*OR c X*OR d).
+Proof.
+ intros. 
+ rewrite xor_bytes_assoc.
+ reflexivity.
+Qed.
+
+
+Theorem split_xor: forall a b c d: byte,
+(((a X*OR b) X*OR c) X*OR d) = ((a X*OR b) X*OR (c X*OR d)).
+Proof.
+ intros. 
+ rewrite flatten_xor. reflexivity.
+Qed.
+
+Theorem distr_gf_09: forall a b: byte,
+    (09 GF* (a X*OR b)) = ((09 GF* a) X*OR (09 GF* b)).
+Proof.
+  intros.
+  unfold "09 GF* s".
+  rewrite distr_gf_02.
+  rewrite distr_gf_02.
+  rewrite distr_gf_02.
+  rewrite flatten_xor.
+  rewrite xor_bytes_noorder.
+  pose proof xor_bytes_assoc a b ((02 GF* (02 GF* (02 GF* a))) X*OR (02 GF* (02 GF* (02 GF* b)))).
+  rewrite split_xor. reflexivity.
+Qed.
+
 Theorem distr_gf_09_four: forall a b c d: byte,
     (09 GF* (a X*OR b X*OR c X*OR d)) = ((09 GF* a) X*OR (09 GF* b) X*OR (09 GF* c) X*OR (09 GF* d)).
 Proof.
-Admitted.
+ intros. 
+ rewrite distr_gf_09.
+ rewrite distr_gf_09.
+ rewrite distr_gf_09.
+ reflexivity.
+Qed.
+
+Theorem xor_comm_paren: forall a b c d: byte,
+((a X*OR b) X*OR c) = ((a X*OR c) X*OR b).
+Proof.
+ intros. 
+ rewrite <- xor_bytes_assoc.
+ rewrite <- xor_bytes_assoc.
+ pose proof xor_bytes_comm b c.
+ rewrite -> H.
+ rewrite <- xor_bytes_comm.
+ reflexivity.
+Qed.
+
+Theorem distr_gf_0b: forall a b: byte,
+    (0b GF* (a X*OR b)) = ((0b GF* a) X*OR (0b GF* b)).
+Proof.
+  intros.
+  unfold "0b GF* s".
+  rewrite distr_gf_02. rewrite distr_gf_02. rewrite distr_gf_02. 
+  rewrite flatten_xor.
+  rewrite xor_bytes_noorder.
+  pose proof xor_bytes_assoc ((a X*OR ((02 GF* a) X*OR (02 GF* b))) X*OR b) (02 GF* (02 GF* (02 GF* a))) (02 GF* (02 GF* (02 GF* b))).
+  rewrite -> H.
+  pose proof xor_bytes_assoc (a X*OR ((02 GF* a) X*OR (02 GF* b))) b (02 GF* (02 GF* (02 GF* a))).
+  rewrite <- H0.
+  pose proof xor_bytes_comm b (02 GF* (02 GF* (02 GF* a))).
+  rewrite -> H1.
+  pose proof flatten_xor a ((02 GF* a) X*OR (02 GF* b)) (02 GF* (02 GF* (02 GF* a))) b.
+  rewrite -> H2.
+  pose proof xor_bytes_assoc a (02 GF* a) (02 GF* b).
+  rewrite -> H3.
+  pose proof xor_bytes_comm (a X*OR (02 GF* a)) (02 GF* b).
+  rewrite H4.
+  pose proof xor_bytes_assoc (02 GF* b) (a X*OR (02 GF* a)) (02 GF* (02 GF* (02 GF* a))).
+  rewrite <- H5.
+  pose proof xor_bytes_comm (02 GF* b) ((a X*OR (02 GF* a)) X*OR (02 GF* (02 GF* (02 GF* a)))).
+  rewrite -> H6.
+  rewrite flatten_xor. rewrite flatten_xor.
+  pose proof xor_comm_paren ((a X*OR (02 GF* a)) X*OR (02 GF* (02 GF* (02 GF* a)))) (02 GF* b) b.
+  rewrite -> H7.
+  pose proof xor_bytes_assoc a (02 GF* a) (02 GF* (02 GF* (02 GF* a))).
+  rewrite -> H8.
+  reflexivity. assumption.
+Qed.
 
 Theorem distr_gf_0b_four: forall a b c d: byte,
     (0b GF* (a X*OR b X*OR c X*OR d)) = ((0b GF* a) X*OR (0b GF* b) X*OR (0b GF* c) X*OR (0b GF* d)).
 Proof.
-Admitted.
+ intros.
+ rewrite distr_gf_0b.
+ rewrite distr_gf_0b.
+ rewrite distr_gf_0b.
+ reflexivity.
+Qed.
+
+Theorem distr_gf_0d: forall a b: byte,
+    (0d GF* (a X*OR b)) = ((0d GF* a) X*OR (0d GF* b)).
+Proof.
+ intros. 
+ unfold "0d GF* s".
+ rewrite distr_gf_02.
+ rewrite distr_gf_02.
+ rewrite distr_gf_02. 
+ rewrite flatten_xor.
+ rewrite flatten_xor.
+ rewrite flatten_xor. 
+ rewrite flatten_xor. 
+ rewrite flatten_xor.
+ pose proof xor_comm_paren ((a X*OR b) X*OR (02 GF* (02 GF* a))) (02 GF* (02 GF* b)) (02 GF* (02 GF* (02 GF* a))).
+ rewrite -> H.
+ pose proof xor_comm_paren a b (02 GF* (02 GF* a)).
+ rewrite -> H0.
+ pose proof xor_comm_paren (a X*OR (02 GF* (02 GF* a))) b (02 GF* (02 GF* (02 GF* a))).
+ rewrite -> H1. 
+ pose proof xor_bytes_assoc a (02 GF* (02 GF* a)) (02 GF* (02 GF* (02 GF* a))).
+ rewrite -> H2.
+ reflexivity.
+ assumption.
+ assumption.
+ assumption.
+Qed.
 
 Theorem distr_gf_0d_four: forall a b c d: byte,
     (0d GF* (a X*OR b X*OR c X*OR d)) = ((0d GF* a) X*OR (0d GF* b) X*OR (0d GF* c) X*OR (0d GF* d)).
 Proof.
-Admitted.
+ intros.
+ rewrite distr_gf_0d.
+ rewrite distr_gf_0d.
+ rewrite distr_gf_0d.
+ reflexivity.
+Qed.
+
+Theorem distr_gf_0e: forall a b: byte,
+    (0e GF* (a X*OR b)) = ((0e GF* a) X*OR (0e GF* b)).
+Proof.
+ intros.
+ unfold "0e GF* s".
+ rewrite distr_gf_02.
+ rewrite distr_gf_02.
+ rewrite distr_gf_02. 
+ rewrite flatten_xor.
+ rewrite flatten_xor.
+ rewrite flatten_xor. 
+ rewrite flatten_xor. 
+ rewrite flatten_xor.
+ pose proof xor_comm_paren (02 GF* a) (02 GF* b) (02 GF* (02 GF* a)).
+ rewrite -> H.
+ pose proof xor_comm_paren (((02 GF* a) X*OR (02 GF* (02 GF* a))) X*OR (02 GF* b)) (02 GF* (02 GF* b)) (02 GF* (02 GF* (02 GF* a))).
+ rewrite -> H0.
+ pose proof xor_comm_paren ((02 GF* a) X*OR (02 GF* (02 GF* a))) (02 GF* b) (02 GF* (02 GF* (02 GF* a))).
+ rewrite -> H1. 
+ pose proof xor_bytes_assoc (02 GF* a) (02 GF* (02 GF* a)) (02 GF* (02 GF* (02 GF* a))).
+ rewrite -> H2.
+ reflexivity.
+ assumption.
+ assumption.
+ assumption.
+Qed.
 
 Theorem distr_gf_0e_four: forall a b c d: byte,
     (0e GF* (a X*OR b X*OR c X*OR d)) = ((0e GF* a) X*OR (0e GF* b) X*OR (0e GF* c) X*OR (0e GF* d)).
 Proof.
-Admitted.
+ intros.
+ rewrite distr_gf_0e.
+ rewrite distr_gf_0e.
+ rewrite distr_gf_0e.
+ reflexivity.
+Qed.
 
 Theorem consolidate_16_xor_bytes: forall a0 a1 a2 a3 b0 b1 b2 b3 c0 c1 c2 c3 d0 d1 d2 d3: byte,
     ((((a0 X*OR b0 X*OR c0 X*OR d0) X*OR (a1 X*OR b1 X*OR c1 X*OR d1))
@@ -1432,7 +1582,68 @@ Theorem consolidate_16_xor_bytes: forall a0 a1 a2 a3 b0 b1 b2 b3 c0 c1 c2 c3 d0 
       ((((a0 X*OR a1 X*OR a2 X*OR a3) X*OR (b0 X*OR b1 X*OR b2 X*OR b3))
           X*OR (c0 X*OR c1 X*OR c2 X*OR c3)) X*OR (d0 X*OR d1 X*OR d2 X*OR d3)).
 Proof.
-Admitted.
+  intros.
+ rewrite flatten_xor.
+ rewrite flatten_xor.
+ rewrite flatten_xor. 
+ rewrite flatten_xor. 
+ rewrite flatten_xor.
+ rewrite flatten_xor.
+ rewrite flatten_xor.
+ rewrite flatten_xor. 
+ rewrite flatten_xor. 
+ rewrite flatten_xor.
+ rewrite flatten_xor.
+ rewrite flatten_xor.
+ rewrite flatten_xor. 
+ rewrite flatten_xor. 
+ rewrite flatten_xor.
+ rewrite flatten_xor.
+ rewrite flatten_xor.
+ rewrite flatten_xor.
+ pose proof xor_comm_paren ((a0 X*OR b0) X*OR c0) d0 a1. rewrite H.
+ pose proof xor_comm_paren (a0 X*OR b0) c0 a1. rewrite H0.
+ pose proof xor_comm_paren a0 b0 a1. rewrite H1.
+ pose proof xor_comm_paren ((((((a0 X*OR a1) X*OR b0) X*OR c0) X*OR d0) X*OR b1) X*OR c1) d1 a2. rewrite H2.
+ pose proof xor_comm_paren (((((a0 X*OR a1) X*OR b0) X*OR c0) X*OR d0) X*OR b1) c1 a2. rewrite H3.
+ pose proof xor_comm_paren ((((a0 X*OR a1) X*OR b0) X*OR c0) X*OR d0) b1 a2. rewrite H4.
+ pose proof xor_comm_paren (((a0 X*OR a1) X*OR b0) X*OR c0) d0 a2. rewrite H5.
+ pose proof xor_comm_paren ((a0 X*OR a1) X*OR b0) c0 a2. rewrite H6.
+ pose proof xor_comm_paren (a0 X*OR a1) b0 a2. rewrite H7.
+ pose proof xor_comm_paren ((((((((((a0 X*OR a1) X*OR a2) X*OR b0) X*OR c0) X*OR d0) X*OR b1) X*OR c1) X*OR d1) X*OR b2) X*OR c2) d2 a3. rewrite H8.
+ pose proof xor_comm_paren (((((((((a0 X*OR a1) X*OR a2) X*OR b0) X*OR c0) X*OR d0) X*OR b1) X*OR c1) X*OR d1) X*OR b2) c2 a3. rewrite H9.
+ pose proof xor_comm_paren ((((((((a0 X*OR a1) X*OR a2) X*OR b0) X*OR c0) X*OR d0) X*OR b1) X*OR c1) X*OR d1) b2 a3. rewrite H10.
+ pose proof xor_comm_paren (((((((a0 X*OR a1) X*OR a2) X*OR b0) X*OR c0) X*OR d0) X*OR b1) X*OR c1) d1 a3. rewrite H11.
+ pose proof xor_comm_paren ((((((a0 X*OR a1) X*OR a2) X*OR b0) X*OR c0) X*OR d0) X*OR b1) c1 a3. rewrite H12.
+ pose proof xor_comm_paren (((((a0 X*OR a1) X*OR a2) X*OR b0) X*OR c0) X*OR d0) b1 a3. rewrite H13.
+ pose proof xor_comm_paren ((((a0 X*OR a1) X*OR a2) X*OR b0) X*OR c0) d0 a3. rewrite H14.
+ pose proof xor_comm_paren (((a0 X*OR a1) X*OR a2) X*OR b0) c0 a3. rewrite H15.
+ pose proof xor_comm_paren ((a0 X*OR a1) X*OR a2) b0 a3. rewrite H16.
+ pose proof xor_comm_paren (((((a0 X*OR a1) X*OR a2) X*OR a3) X*OR b0) X*OR c0) d0 b1. rewrite H17.
+ pose proof xor_comm_paren ((((a0 X*OR a1) X*OR a2) X*OR a3) X*OR b0) c0 b1. rewrite H18.
+ pose proof xor_comm_paren ((((((((a0 X*OR a1) X*OR a2) X*OR a3) X*OR b0) X*OR b1) X*OR c0) X*OR d0) X*OR c1) d1 b2. rewrite H19.
+ pose proof xor_comm_paren (((((((a0 X*OR a1) X*OR a2) X*OR a3) X*OR b0) X*OR b1) X*OR c0) X*OR d0) c1 b2. rewrite H20.
+ pose proof xor_comm_paren ((((((a0 X*OR a1) X*OR a2) X*OR a3) X*OR b0) X*OR b1) X*OR c0) d0 b2. rewrite H21.
+ pose proof xor_comm_paren (((((a0 X*OR a1) X*OR a2) X*OR a3) X*OR b0) X*OR b1) c0 b2. rewrite H22.
+ pose proof xor_comm_paren (((((((((((a0 X*OR a1) X*OR a2) X*OR a3) X*OR b0) X*OR b1) X*OR b2) X*OR c0) X*OR d0) X*OR c1) X*OR d1) X*OR c2) d2 b3. rewrite H23.
+ pose proof xor_comm_paren ((((((((((a0 X*OR a1) X*OR a2) X*OR a3) X*OR b0) X*OR b1) X*OR b2) X*OR c0) X*OR d0) X*OR c1) X*OR d1) c2 b3. rewrite H24.
+ pose proof xor_comm_paren (((((((((a0 X*OR a1) X*OR a2) X*OR a3) X*OR b0) X*OR b1) X*OR b2) X*OR c0) X*OR d0) X*OR c1) d1 b3. rewrite H25.
+ pose proof xor_comm_paren ((((((((a0 X*OR a1) X*OR a2) X*OR a3) X*OR b0) X*OR b1) X*OR b2) X*OR c0) X*OR d0) c1 b3. rewrite H26.
+ pose proof xor_comm_paren (((((((a0 X*OR a1) X*OR a2) X*OR a3) X*OR b0) X*OR b1) X*OR b2) X*OR c0) d0 b3. rewrite H27.
+ pose proof xor_comm_paren ((((((a0 X*OR a1) X*OR a2) X*OR a3) X*OR b0) X*OR b1) X*OR b2) c0 b3. rewrite H28.
+ pose proof xor_comm_paren ((((((((a0 X*OR a1) X*OR a2) X*OR a3) X*OR b0) X*OR b1) X*OR b2) X*OR b3) X*OR c0) d0 c1. rewrite H29.
+ pose proof xor_comm_paren ((((((((((a0 X*OR a1) X*OR a2) X*OR a3) X*OR b0) X*OR b1) X*OR b2) X*OR b3) X*OR c0) X*OR c1) X*OR d0) d1 c2. rewrite H30.
+ pose proof xor_comm_paren (((((((((a0 X*OR a1) X*OR a2) X*OR a3) X*OR b0) X*OR b1) X*OR b2) X*OR b3) X*OR c0) X*OR c1) d0 c2. rewrite H31.
+ pose proof xor_comm_paren ((((((((((((a0 X*OR a1) X*OR a2) X*OR a3) X*OR b0) X*OR b1) X*OR b2) X*OR b3) X*OR c0) X*OR c1) X*OR c2) X*OR d0) X*OR d1) d2 c3. rewrite H32.
+ pose proof xor_comm_paren (((((((((((a0 X*OR a1) X*OR a2) X*OR a3) X*OR b0) X*OR b1) X*OR b2) X*OR b3) X*OR c0) X*OR c1) X*OR c2) X*OR d0) d1 c3. rewrite H33.
+ pose proof xor_comm_paren ((((((((((a0 X*OR a1) X*OR a2) X*OR a3) X*OR b0) X*OR b1) X*OR b2) X*OR b3) X*OR c0) X*OR c1) X*OR c2) d0 c3. rewrite H34.
+ reflexivity.
+ assumption. assumption. assumption. assumption. assumption. assumption. assumption. assumption. 
+assumption. assumption. assumption. assumption. assumption. assumption. assumption. assumption. 
+assumption. assumption. assumption. assumption. assumption. assumption. assumption. assumption. 
+assumption. assumption. assumption. assumption. assumption. assumption. assumption. assumption. 
+assumption. assumption. assumption. assumption. 
+Qed.
 
   
 Definition mix_column_transform (column: word): word :=
