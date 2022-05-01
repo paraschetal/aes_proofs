@@ -36,16 +36,17 @@ Definition xor_bits (b1 b2: bit) : bit :=
           | s1 => s0
           end
   end. 
-         
+
+Notation "a x*or b" := (xor_bits a b) (at level 75).
 Definition xor_bytes (b a: byte) : byte :=
   match b with
   | bits8 b7 b6 b5 b4 b3 b2 b1 b0 =>
       match a with
       | bits8 a7 a6 a5 a4 a3 a2 a1 a0 =>
-          bits8 (xor_bits b7 a7) (xor_bits b6 a6) (xor_bits b5 a5) (xor_bits b4 a4) (xor_bits b3 a3) (xor_bits b2 a2) (xor_bits b1 a1) (xor_bits b0 a0)
+          bits8 (b7 x*or a7) (b6 x*or a6) (b5 x*or a5) (b4 x*or a4) (b3 x*or a3) (b2 x*or a2) (b1 x*or a1) (b0 x*or a0)
       end
   end.
-
+Notation "A X*OR B" := (xor_bytes A B) (at level 75).
 
 Inductive word : Type :=
 | bytes4 (b0 b1 b2 b3: byte)
@@ -62,7 +63,6 @@ Inductive matrix : Type :=
            r2c0 r2c1 r2c2 r2c3
            r3c0 r3c1 r3c2 r3c3: byte)
 .
-
 
 Definition s_box (b: byte) : byte :=
   match (ms_nibble b) with
@@ -683,521 +683,17 @@ Definition inv_s_box (b: byte) : byte :=
 Theorem sbox_inv_sbox: forall b: byte,
     inv_s_box (s_box (b)) = b.
 Proof.
-  intros b.
-  destruct b.
-  * destruct b0.
-    ** destruct b1.
-       *** destruct b2.
-           **** destruct b3.
-                ***** destruct b4.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ***** destruct b4.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-           **** destruct b3.
-                ***** destruct b4.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ***** destruct b4.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-       *** destruct b2.
-                **** destruct b3.
-                ***** destruct b4.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ***** destruct b4.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-           **** destruct b3.
-                ***** destruct b4.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ***** destruct b4.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-    ** destruct b1.
-       *** destruct b2.
-           **** destruct b3.
-                ***** destruct b4.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ***** destruct b4.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-           **** destruct b3.
-                ***** destruct b4.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ***** destruct b4.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-       *** destruct b2.
-                **** destruct b3.
-                ***** destruct b4.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ***** destruct b4.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-           **** destruct b3.
-                ***** destruct b4.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ***** destruct b4.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ****** destruct b5.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******* destruct b6.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
-                ******** destruct b7.
-                ********* reflexivity.
-                ********* reflexivity.
+  intros b. destruct b.
+  destruct b0;
+    (destruct b1;
+     (destruct b2;
+      (destruct b3;
+       (destruct b4;
+        (destruct b5;
+         (destruct b6;
+          (destruct b7;
+           reflexivity))))))).
 Qed.
-
 
 Inductive round :=
 | r1
@@ -1212,171 +708,6 @@ Inductive round :=
 | r10
 .
 
-(*
-Inductive iw :=
-| i0 
-| i1
-| i2
-| i3
-| i4
-| i5
-| i6
-| i7
-| i8
-| i9
-| i10
-| i11
-| i12
-| i13
-| i14
-| i15
-| i16
-| i17
-| i18
-| i19
-| i20
-| i21
-| i22
-| i23
-| i24
-| i25
-| i26
-| i27
-| i28
-| i29
-| i30
-| i31
-| i32
-| i33
-| i34
-| i35
-| i36
-| i37
-| i38
-| i39
-| i40
-| i41
-| i42
-| i43
-.
-*)                
-
-
-(*
-Program Fixpoint wi (k:key_t) (i: iw) : word :=
-  match i with
-  | i0 => match k with
-          | kwords w0 _ _ _ => w0
-          end
-  | i1 => match k with
-          | kwords _ w1 _ _ => w1
-          end
-  | i2 => match k with
-          | kwords _ _ w2 _ => w2
-          end
-  | i3 => match k with
-          | kwords _ _ _ w3 => w3
-          end
-  | i4 => rcon_word r1 (sub_word (rot_word (wi k i3)))
-  | i5 => xor_words (wi k i4) (wi k i1)
-  | i6 => xor_words (wi k i5) (wi k i2)
-  | i7 => xor_words (wi k i6) (wi k i3)
-  | i8 => rcon_word r2 (sub_word (rot_word (wi k i7)))
-  | i9 => xor_words (wi k i8) (wi k i5)
-  | i10 => xor_words (wi k i9) (wi k i6)
-  | i11 => xor_words (wi k i10) (wi k i7)
-  | i12 => rcon_word r3 (sub_word (rot_word (wi k i11)))
-  | i13 => xor_words (wi k i12) (wi k i9)
-  | i14 => xor_words (wi k i13) (wi k i10)
-  | i15 => xor_words (wi k i14) (wi k i11)
-  | i16 => rcon_word r4 (sub_word (rot_word (wi k i15)))
-  | i17 => xor_words (wi k i16) (wi k i13)
-  | i18 => xor_words (wi k i17) (wi k i14)
-  | i19 => xor_words (wi k i18) (wi k i15)
-  | i20 => rcon_word r5 (sub_word (rot_word (wi k i19)))
-  | i21 => xor_words (wi k i20) (wi k i17)
-  | i22 => xor_words (wi k i21) (wi k i18)
-  | i23 => xor_words (wi k i22) (wi k i19)
-  | i24 => rcon_word r6 (sub_word (rot_word (wi k i23)))
-  | i25 => xor_words (wi k i24) (wi k i21)
-  | i26 => xor_words (wi k i25) (wi k i22)
-  | i27 => xor_words (wi k i26) (wi k i23)
-  | i28 => rcon_word r7 (sub_word (rot_word (wi k i27)))
-  | i29 => xor_words (wi k i28) (wi k i25)
-  | i30 => xor_words (wi k i29) (wi k i26)
-  | i31 => xor_words (wi k i30) (wi k i27)
-  | i32 => rcon_word r8 (sub_word (rot_word (wi k i31)))
-  | i33 => xor_words (wi k i32) (wi k i29)
-  | i34 => xor_words (wi k i33) (wi k i30)
-  | i35 => xor_words (wi k i34) (wi k i31)
-  | i36 => rcon_word r9 (sub_word (rot_word (wi k i35)))
-  | i37 => xor_words (wi k i36) (wi k i33)
-  | i38 => xor_words (wi k i37) (wi k i34)
-  | i39 => xor_words (wi k i38) (wi k i35)
-  | i40 => rcon_word r10 (sub_word (rot_word (wi k i39)))
-  | i41 => xor_words (wi k i40) (wi k i37)
-  | i42 => xor_words (wi k i41) (wi k i38)
-  | i43 => xor_words (wi k i42) (wi k i39)
-  end.
-*)
-(*
-Program Fixpoint wi (k:key_t) (i: nat) (i_bound: i <= 43) : word :=
-  match i with
-  | 0 => match k with
-          | kwords w0 _ _ _ => w0
-          end
-  | 1 => match k with
-          | kwords _ w1 _ _ => w1
-          end
-  | 2 => match k with
-          | kwords _ _ w2 _ => w2
-          end
-  | 3 => match k with
-          | kwords _ _ _ w3 => w3
-          end
-  | 4 => rcon_word r1 (sub_word (rot_word (wi k 3)))
-  | 5 => xor_words (wi k 4) (wi k 1)
-  | 6 => xor_words (wi k 5) (wi k 2)
-  | 7 => xor_words (wi k 6) (wi k 3)
-  | 8 => rcon_word r2 (sub_word (rot_word (wi k 7)))
-  | 9 => xor_words (wi k 8) (wi k 5)
-  | 10 => xor_words (wi k 9) (wi k 6)
-  | 11 => xor_words (wi k 10) (wi k 7)
-  | 12 => rcon_word r3 (sub_word (rot_word (wi k 11)))
-  | 13 => xor_words (wi k 12) (wi k 9)
-  | 14 => xor_words (wi k 13) (wi k 10)
-  | 15 => xor_words (wi k 14) (wi k 11)
-  | 16 => rcon_word r4 (sub_word (rot_word (wi k 15)))
-  | 17 => xor_words (wi k 16) (wi k 13)
-  | 18 => xor_words (wi k 17) (wi k 14)
-  | 19 => xor_words (wi k 18) (wi k 15)
-  | 20 => rcon_word r5 (sub_word (rot_word (wi k 19)))
-  | 21 => xor_words (wi k 20) (wi k 17)
-  | 22 => xor_words (wi k 21) (wi k 18)
-  | 23 => xor_words (wi k 22) (wi k 19)
-  | 24 => rcon_word r6 (sub_word (rot_word (wi k 23)))
-  | 25 => xor_words (wi k 24) (wi k 21)
-  | 26 => xor_words (wi k 25) (wi k 22)
-  | 27 => xor_words (wi k 26) (wi k 23)
-  | 28 => rcon_word r7 (sub_word (rot_word (wi k 27)))
-  | 29 => xor_words (wi k 28) (wi k 25)
-  | 30 => xor_words (wi k 29) (wi k 26)
-  | 31 => xor_words (wi k 30) (wi k 27)
-  | 32 => rcon_word r8 (sub_word (rot_word (wi k 31)))
-  | 33 => xor_words (wi k 32) (wi k 29)
-  | 34 => xor_words (wi k 33) (wi k 30)
-  | 35 => xor_words (wi k 34) (wi k 31)
-  | 36 => rcon_word r9 (sub_word (rot_word (wi k 35)))
-  | 37 => xor_words (wi k 36) (wi k 33)
-  | 38 => xor_words (wi k 37) (wi k 34)
-  | 39 => xor_words (wi k 38) (wi k 35)
-  | 40 => rcon_word r10 (sub_word (rot_word (wi k 39)))
-  | 41 => xor_words (wi k 40) (wi k 37)
-  | 42 => xor_words (wi k 41) (wi k 38)
-  | 43 |_ => xor_words (wi k 42) (wi k 39)
-  end.
-
-*)
 
 Definition shift_rows (state: matrix) : matrix :=
   match state with
@@ -1520,18 +851,904 @@ Qed.
 
 
 (*TODO: mix_columns, inv_mix_columns, mc_inv_mc*)
+
+Definition xtime (b: byte) : byte :=
+  match b with
+  | bits8 s0 b6 b5 b4 b3 b2 b1 b0 => bits8 b6 b5 b4 b3 b2 b1 b0 s0
+  | bits8 s1 b6 b5 b4 b3 b2 b1 b0 => xor_bytes (bits8 b6 b5 b4 b3 b2 b1 b0 s0) (bits8 s0 s0 s0 s1 s1 s0 s1 s1)
+  end.
+
+Definition mul01 (b: byte): byte :=
+  b
+.
+
+Definition mul02 (b: byte): byte :=
+  xtime b
+.
+
+Notation "01 GF* A" := (mul01 A) (at level 75).
+Notation "02 GF* A" := (mul02 A) (at level 75).
+
+Definition mul03 (b: byte): byte :=
+  (02 GF* b) X*OR (b)
+.    
+
+Definition mul09 (b: byte): byte:=
+  b X*OR (02 GF* (02 GF* (02 GF* b)))
+.
+
+Definition mul0b (b:byte): byte:=
+  b X*OR ((02 GF* b) X*OR (02 GF* (02 GF* (02 GF* b))))
+.
+
+Definition mul0d (b: byte): byte:=
+  b X*OR ((02 GF* (02 GF* b) X*OR (02 GF* (02 GF* (02 GF* b)))))
+.
+
+Definition mul0e (b: byte): byte:=
+  (02 GF* b) X*OR ((02 GF* (02 GF* b) X*OR (02 GF* (02 GF* (02 GF* b)))))
+.
+
+Notation "03 GF* A" := (mul03 A) (at level 75).
+Notation "09 GF* A" := (mul09 A) (at level 75).
+Notation "0b GF* A" := (mul0b A) (at level 75).
+Notation "0d GF* A" := (mul0d A) (at level 75).
+Notation "0e GF* A" := (mul0e A) (at level 75).
+
+Definition zb:=
+  bits8 s0 s0 s0 s0 s0 s0 s0 s0.
+
+Theorem xor_byte_zb: forall b: byte,
+    (zb X*OR b) = b.
+Proof.
+  intros b. destruct b.
+  destruct b0;
+    (destruct b1;
+     (destruct b2;
+      (destruct b3;
+       (destruct b4;
+        (destruct b5;
+         (destruct b6;
+          (destruct b7;
+           reflexivity))))))).
+Qed.
+
+Theorem xor_bits_comm: forall a b: bit,
+    (a x*or b) = (b x*or a).
+Proof.
+  intros a b.
+  destruct a.
+  - reflexivity.
+  - reflexivity.
+Qed.
+    
+Theorem xor_bytes_comm: forall a b: byte,
+    (a X*OR b) = (b X*OR a).
+Proof.
+  intros a b.
+  unfold "X*OR".
+  destruct a. destruct b.
+  rewrite xor_bits_comm.
+  pose proof (xor_bits_comm b1 b9).
+  pose proof (xor_bits_comm b2 b10).
+  pose proof (xor_bits_comm b3 b11).
+  pose proof (xor_bits_comm b4 b12).
+  pose proof (xor_bits_comm b5 b13).
+  pose proof (xor_bits_comm b6 b14).
+  pose proof (xor_bits_comm b7 b15).
+  rewrite H. rewrite H0. rewrite H1.
+  rewrite H2. rewrite H3. rewrite H4.
+  rewrite H5.
+  reflexivity.
+Qed.
+
+Theorem xor_bits_assoc: forall a b c: bit,
+    (a x*or (b x*or c)) = ((a x*or b) x*or c).
+Proof.
+  intros a b c.
+  simpl. unfold "x*or".
+  destruct a.
+  - destruct b.
+    + destruct c.
+      ++ reflexivity.
+      ++ reflexivity.
+    + destruct c.
+      ++ reflexivity.
+      ++ reflexivity.
+  - destruct b.
+    + destruct c.
+      ++ reflexivity.
+      ++ reflexivity.
+    + destruct c.
+      ++ reflexivity.
+      ++ reflexivity.
+Qed.
+
+Theorem xor_bytes_assoc: forall a b c: byte,
+    (a X*OR (b X*OR c)) = ((a X*OR b) X*OR c).
+Proof.
+  intros a b c.
+  simpl. unfold "X*OR".
+  destruct a. destruct b. destruct c.
+  rewrite xor_bits_assoc. rewrite xor_bits_assoc.
+  rewrite xor_bits_assoc. rewrite xor_bits_assoc.
+  rewrite xor_bits_assoc. rewrite xor_bits_assoc.
+  rewrite xor_bits_assoc. rewrite xor_bits_assoc.
+  reflexivity.
+Qed.
+
+Theorem xor_bits_cancel: forall a b c: bit,
+    ((a x*or c) x*or (b x*or c)) = (a x*or b).
+Proof.
+  intros a b c.
+  unfold "x*or".
+  destruct c.
+  - destruct a.
+    + destruct b.
+      ++ reflexivity.
+      ++ reflexivity.
+    + destruct b.
+      ++ reflexivity.
+      ++ reflexivity.
+  - destruct a.
+    + destruct b.
+      ++ reflexivity.
+      ++ reflexivity.
+    + destruct b.
+      ++ reflexivity.
+      ++ reflexivity.
+Qed.
+
+Theorem xor_bytes_cancel: forall a b c: byte,
+    ((a X*OR c) X*OR (b X*OR c)) = (a X*OR b).
+Proof.
+  intros a b c.
+  unfold "X*OR".
+  destruct a. destruct b. destruct c.
+  rewrite xor_bits_cancel. rewrite xor_bits_cancel.
+  rewrite xor_bits_cancel. rewrite xor_bits_cancel.
+  rewrite xor_bits_cancel. rewrite xor_bits_cancel.
+  rewrite xor_bits_cancel. rewrite xor_bits_cancel.
+  reflexivity.
+Qed.
+
+Theorem xor_bits_noorder: forall a b c d: bit,
+    (a x*or b x*or c x*or d) = (a x*or c x*or b x*or d).
+Proof.
+  intros a b c d.
+  unfold "x*or".
+  destruct a; (destruct b; (destruct c; (destruct d; (reflexivity)))).
+Qed.
+         
+Theorem xor_bytes_noorder: forall a b c d: byte,
+    (a X*OR b X*OR c X*OR d) = (a X*OR c X*OR b X*OR d).
+Proof.
+  intros a b c d.
+  destruct a. destruct b.
+  destruct c. destruct d.
+  unfold "X*OR".
+  pose proof (xor_bits_noorder b0 b8 b16 b24).
+  pose proof (xor_bits_noorder b1 b9 b17 b25).
+  pose proof (xor_bits_noorder b2 b10 b18 b26).
+  pose proof (xor_bits_noorder b3 b11 b19 b27).
+  pose proof (xor_bits_noorder b4 b12 b20 b28).
+  pose proof (xor_bits_noorder b5 b13 b21 b29).
+  pose proof (xor_bits_noorder b6 b14 b22 b30).
+  pose proof (xor_bits_noorder b7 b15 b23 b31).
+  rewrite H. rewrite H0. rewrite H1. rewrite H2.
+  rewrite H3. rewrite H4. rewrite H5. rewrite H6.
+  reflexivity.
+Qed.
+
+Theorem a''_a_eq_a: forall a: byte,
+    ((((0e GF* (02 GF* a)) X*OR (0b GF* a)) X*OR (0d GF* a)) X*OR (09 GF* (03 GF* a))) = a.
+Proof.
+  intros a. destruct a.
+  destruct b0;
+    (destruct b1;
+     (destruct b2;
+      (destruct b3;
+       (destruct b4;
+        (destruct b5;
+         (destruct b6;
+          (destruct b7;
+           reflexivity))))))).
+Qed.
+
+Theorem a''_b_eq_zb: forall b: byte,
+    ((((0e GF* (03 GF* b)) X*OR (0b GF* (02 GF* b))) X*OR (0d GF* b)) X*OR (09 GF* b)) = zb.
+Proof.
+  intros b. destruct b.
+  destruct b0;
+    (destruct b1;
+     (destruct b2;
+      (destruct b3;
+       (destruct b4;
+        (destruct b5;
+         (destruct b6;
+          (destruct b7;
+           reflexivity))))))).
+Qed.
+
+Theorem a''_c_eq_zb: forall c: byte,
+    (((0e GF* c) X*OR (0b GF* (03 GF* c)) X*OR (0d GF* (02 GF* c)) X*OR (09 GF* c))) = zb.
+Proof.
+  intros c. destruct c.
+  destruct b0;
+    (destruct b1;
+     (destruct b2;
+      (destruct b3;
+       (destruct b4;
+        (destruct b5;
+         (destruct b6;
+          (destruct b7;
+           reflexivity))))))).
+Qed.
+
+Theorem a''_d_eq_zb: forall d: byte,
+    (((0e GF* d) X*OR (0b GF* d)) X*OR (0d GF* (03 GF* d)) X*OR (09 GF* (02 GF* d))) = zb.
+Proof.
+  intros d. destruct d.
+  destruct b0;
+    (destruct b1;
+     (destruct b2;
+      (destruct b3;
+       (destruct b4;
+        (destruct b5;
+         (destruct b6;
+          (destruct b7;
+           reflexivity))))))).
+Qed.
+
+Theorem a''_eq_a: forall a b c d: byte,
+    ((((0e GF* (02 GF* a) X*OR (0b GF* a)) X*OR (0d GF* a)) X*OR (09 GF* (03 GF* a)))
+      X*OR (((((0e GF* (03 GF* b)) X*OR (0b GF* (02 GF* b))) X*OR (0d GF* b)) X*OR (09 GF* b))
+            X*OR ((((0e GF* c) X*OR (0b GF* (03 GF* c)) X*OR (0d GF* (02 GF* c)) X*OR (09 GF* c)))
+                  X*OR ((((0e GF* d) X*OR (0b GF* d)) X*OR (0d GF* (03 GF* d)) X*OR (09 GF* (02 GF* d))))))) = a.
+Proof.
+  intros a b c d.
+  rewrite a''_a_eq_a.
+  rewrite a''_b_eq_zb.
+  rewrite a''_c_eq_zb.
+  rewrite a''_d_eq_zb.
+  rewrite xor_byte_zb.
+  rewrite xor_byte_zb.
+  rewrite xor_bytes_comm.
+  rewrite xor_byte_zb.
+  reflexivity.
+Qed.
+
+Theorem b''_a_eq_zb: forall a: byte,
+    ((((09 GF* (02 GF* a)) X*OR (0e GF* a)) X*OR (0b GF* a)) X*OR (0d GF* (03 GF* a))) = zb.
+Proof.
+  intros a. destruct a.
+  destruct b0;
+    (destruct b1;
+     (destruct b2;
+      (destruct b3;
+       (destruct b4;
+        (destruct b5;
+         (destruct b6;
+          (destruct b7;
+           reflexivity))))))).
+Qed.
+
+Theorem b''_b_eq_b: forall b: byte,
+    ((((09 GF* (03 GF* b)) X*OR (0e GF* (02 GF* b))) X*OR (0b GF* b)) X*OR (0d GF* b)) = b.
+Proof.
+  intros b. destruct b.
+  destruct b0;
+    (destruct b1;
+     (destruct b2;
+      (destruct b3;
+       (destruct b4;
+        (destruct b5;
+         (destruct b6;
+          (destruct b7;
+           reflexivity))))))).
+Qed.
+
+Theorem b''_c_eq_zb: forall c: byte,
+    (((09 GF* c) X*OR (0e GF* (03 GF* c)) X*OR (0b GF* (02 GF* c)) X*OR (0d GF* c))) = zb.
+Proof.
+  intros c. destruct c.
+  destruct b0;
+    (destruct b1;
+     (destruct b2;
+      (destruct b3;
+       (destruct b4;
+        (destruct b5;
+         (destruct b6;
+          (destruct b7;
+           reflexivity))))))).
+Qed.
+
+Theorem b''_d_eq_zb: forall d: byte,
+    (((09 GF* d) X*OR (0e GF* d)) X*OR (0b GF* (03 GF* d)) X*OR (0d GF* (02 GF* d))) = zb.
+Proof.
+  intros d. destruct d.
+  destruct b0;
+    (destruct b1;
+     (destruct b2;
+      (destruct b3;
+       (destruct b4;
+        (destruct b5;
+         (destruct b6;
+          (destruct b7;
+           reflexivity))))))).
+Qed.
+
+Theorem b''_eq_b: forall a b c d: byte,
+    (((((09 GF* (02 GF* a)) X*OR (0e GF* a)) X*OR (0b GF* a)) X*OR (0d GF* (03 GF* a)))
+      X*OR (((((09 GF* (03 GF* b)) X*OR (0e GF* (02 GF* b))) X*OR (0b GF* b)) X*OR (0d GF* b))
+            X*OR ((((09 GF* c) X*OR (0e GF* (03 GF* c)) X*OR (0b GF* (02 GF* c)) X*OR (0d GF* c)))
+                  X*OR ((((09 GF* d) X*OR (0e GF* d)) X*OR (0b GF* (03 GF* d)) X*OR (0d GF* (02 GF* d))))
+                )
+          )
+    ) = b.
+Proof.
+  intros a b c d.
+  rewrite b''_a_eq_zb.
+  rewrite b''_b_eq_b.
+  rewrite b''_c_eq_zb.
+  rewrite b''_d_eq_zb.
+  rewrite xor_byte_zb.
+  rewrite xor_byte_zb.
+  rewrite xor_bytes_comm.
+  rewrite xor_byte_zb.
+  reflexivity.
+Qed.
+
+Theorem c''_a_eq_zb: forall a: byte,
+    ((((0d GF* (02 GF* a)) X*OR (09 GF* a)) X*OR (0e GF* a)) X*OR (0b GF* (03 GF* a))) = zb.
+Proof.
+  intros a. destruct a.
+  destruct b0;
+    (destruct b1;
+     (destruct b2;
+      (destruct b3;
+       (destruct b4;
+        (destruct b5;
+         (destruct b6;
+          (destruct b7;
+           reflexivity))))))).
+Qed.
+
+Theorem c''_b_eq_zb: forall b: byte,
+    ((((0d GF* (03 GF* b)) X*OR (09 GF* (02 GF* b))) X*OR (0e GF* b)) X*OR (0b GF* b)) = zb.
+Proof.
+  intros b. destruct b.
+  destruct b0;
+    (destruct b1;
+     (destruct b2;
+      (destruct b3;
+       (destruct b4;
+        (destruct b5;
+         (destruct b6;
+          (destruct b7;
+           reflexivity))))))).
+Qed.
+
+Theorem c''_c_eq_c: forall c: byte,
+    (((0d GF* c) X*OR (09 GF* (03 GF* c)) X*OR (0e GF* (02 GF* c)) X*OR (0b GF* c))) = c.
+Proof.
+  intros c. destruct c.
+  destruct b0;
+    (destruct b1;
+     (destruct b2;
+      (destruct b3;
+       (destruct b4;
+        (destruct b5;
+         (destruct b6;
+          (destruct b7;
+           reflexivity))))))).
+Qed.
+
+Theorem c''_d_eq_zb: forall d: byte,
+    (((0d GF* d) X*OR (09 GF* d)) X*OR (0e GF* (03 GF* d)) X*OR (0b GF* (02 GF* d))) = zb.
+Proof.
+  intros d. destruct d.
+  destruct b0;
+    (destruct b1;
+     (destruct b2;
+      (destruct b3;
+       (destruct b4;
+        (destruct b5;
+         (destruct b6;
+          (destruct b7;
+           reflexivity))))))).
+Qed.
+
+Theorem c''_eq_c: forall a b c d: byte,
+    (((((0d GF* (02 GF* a)) X*OR (09 GF* a)) X*OR (0e GF* a)) X*OR (0b GF* (03 GF* a)))
+      X*OR (((((0d GF* (03 GF* b)) X*OR (09 GF* (02 GF* b))) X*OR (0e GF* b)) X*OR (0b GF* b))
+            X*OR ((((0d GF* c) X*OR (09 GF* (03 GF* c)) X*OR (0e GF* (02 GF* c)) X*OR (0b GF* c)))
+                  X*OR ((((0d GF* d) X*OR (09 GF* d)) X*OR (0e GF* (03 GF* d)) X*OR (0b GF* (02 GF* d)))
+                )
+          )
+    )) = c.
+Proof.
+  intros a b c d.
+  rewrite c''_a_eq_zb.
+  rewrite c''_b_eq_zb.
+  rewrite c''_c_eq_c.
+  rewrite c''_d_eq_zb.
+  rewrite xor_byte_zb.
+  rewrite xor_byte_zb.
+  rewrite xor_bytes_comm.
+  rewrite xor_byte_zb.
+  reflexivity.
+Qed.
+
+Theorem d''_a_eq_zb: forall a: byte,
+    ((((0b GF* (02 GF* a)) X*OR (0d GF* a)) X*OR (09 GF* a)) X*OR (0e GF* (03 GF* a))) = zb.
+Proof.
+  intros a. destruct a.
+  destruct b0;
+    (destruct b1;
+     (destruct b2;
+      (destruct b3;
+       (destruct b4;
+        (destruct b5;
+         (destruct b6;
+          (destruct b7;
+           reflexivity))))))).
+Qed.
+
+Theorem d''_b_eq_zb: forall b: byte,
+    ((((0b GF* (03 GF* b)) X*OR (0d GF* (02 GF* b))) X*OR (09 GF* b)) X*OR (0e GF* b)) = zb.
+Proof.
+  intros b. destruct b.
+  destruct b0;
+    (destruct b1;
+     (destruct b2;
+      (destruct b3;
+       (destruct b4;
+        (destruct b5;
+         (destruct b6;
+          (destruct b7;
+           reflexivity))))))).
+Qed.
+
+Theorem d''_c_eq_zb: forall c: byte,
+    (((0b GF* c) X*OR (0d GF* (03 GF* c)) X*OR (09 GF* (02 GF* c)) X*OR (0e GF* c))) = zb.
+Proof.
+  intros c. destruct c.
+  destruct b0;
+    (destruct b1;
+     (destruct b2;
+      (destruct b3;
+       (destruct b4;
+        (destruct b5;
+         (destruct b6;
+          (destruct b7;
+           reflexivity))))))).
+Qed.
+
+Theorem d''_d_eq_d: forall d: byte,
+    (((0b GF* d) X*OR (0d GF* d)) X*OR (09 GF* (03 GF* d)) X*OR (0e GF* (02 GF* d))) = d.
+Proof.
+  intros d. destruct d.
+  destruct b0;
+    (destruct b1;
+     (destruct b2;
+      (destruct b3;
+       (destruct b4;
+        (destruct b5;
+         (destruct b6;
+          (destruct b7;
+           reflexivity))))))).
+Qed.
+
+Theorem d''_eq_c: forall a b c d: byte,
+    (((((0b GF* (02 GF* a)) X*OR (0d GF* a)) X*OR (09 GF* a)) X*OR (0e GF* (03 GF* a)))
+      X*OR (((((0b GF* (03 GF* b)) X*OR (0d GF* (02 GF* b))) X*OR (09 GF* b)) X*OR (0e GF* b))
+            X*OR ((((0b GF* c) X*OR (0d GF* (03 GF* c)) X*OR (09 GF* (02 GF* c)) X*OR (0e GF* c)))
+                  X*OR ((((0b GF* d) X*OR (0d GF* d)) X*OR (09 GF* (03 GF* d)) X*OR (0e GF* (02 GF* d)))
+                )
+          )
+    )) = d.
+Proof.
+  intros a b c d.
+  rewrite d''_a_eq_zb.
+  rewrite d''_b_eq_zb.
+  rewrite d''_c_eq_zb.
+  rewrite d''_d_eq_d.
+  rewrite xor_byte_zb.
+  rewrite xor_byte_zb.
+  rewrite xor_byte_zb.
+  reflexivity.
+Qed.
+
+
+Theorem distr_gf_01: forall a b: byte,
+    (01 GF* (a X*OR b)) = ((01 GF* a) X*OR (01 GF* b)).
+Proof.
+  intros a b.
+  unfold "01 GF* s".
+  reflexivity.
+Qed.
+(*
+Theorem distr_gf_01_four: forall a b c d: byte,
+    (01 GF* (a X*OR b X*OR c X*OR d)) = ((01 GF* a) X*OR (01 GF* b) X*OR (01 GF* c) X*OR (01 GF* d)).
+Proof.
+  intros a b c d.
+  unfold "01 GF* s".
+  reflexivity.
+Qed.
+*)
+Theorem xtime_distr: forall a b: byte,
+    (xtime (a X*OR b)) = ((xtime a) X*OR (xtime b)).
+Proof.
+  intros a b.
+  unfold xtime.
+  destruct a . destruct b.
+  simpl.
+  destruct b0.
+  - destruct b8.
+    + simpl. reflexivity.
+    + simpl. rewrite <- xor_bits_assoc.
+      rewrite <- xor_bits_assoc. rewrite <- xor_bits_assoc.
+      rewrite <- xor_bits_assoc. rewrite <- xor_bits_assoc.
+      rewrite <- xor_bits_assoc. rewrite <- xor_bits_assoc.
+      reflexivity.
+  - destruct b8.
+    + simpl. rewrite <- xor_bits_assoc.
+      rewrite <- xor_bits_assoc. rewrite <- xor_bits_assoc.
+      rewrite <- xor_bits_assoc. rewrite <- xor_bits_assoc.
+      rewrite <- xor_bits_assoc. rewrite <- xor_bits_assoc.
+      rewrite <- xor_bits_assoc. rewrite <- xor_bits_assoc.
+      rewrite <- xor_bits_assoc. rewrite <- xor_bits_assoc.
+      rewrite <- xor_bits_assoc. rewrite <- xor_bits_assoc.
+      rewrite <- xor_bits_assoc.
+      pose proof (xor_bits_comm b9 s0).
+      pose proof (xor_bits_comm b10 s0).
+      pose proof (xor_bits_comm b11 s0).
+      pose proof (xor_bits_comm b12 s1).
+      pose proof (xor_bits_comm b13 s1).
+      pose proof (xor_bits_comm b14 s0).
+      pose proof (xor_bits_comm b15 s1).
+      rewrite H. rewrite H0. rewrite H1.
+      rewrite H2. rewrite H3. rewrite H4.
+      rewrite H5. reflexivity.
+    + simpl. rewrite xor_bits_cancel. rewrite xor_bits_cancel.
+      rewrite xor_bits_cancel. rewrite xor_bits_cancel.
+      rewrite xor_bits_cancel. rewrite xor_bits_cancel.
+      rewrite xor_bits_cancel.
+      reflexivity.
+Qed.
+
+Theorem distr_gf_02: forall a b: byte,
+    (02 GF* (a X*OR b)) = ((02 GF* a) X*OR (02 GF* b)).
+Proof.
+  intros a b.
+  unfold "02 GF* s".
+  rewrite xtime_distr.
+  reflexivity.
+Qed.
+(*
+Theorem distr_gf_02_four: forall a b c d: byte,
+    (02 GF* (a X*OR b X*OR c X*OR d)) = ((02 GF* a) X*OR (02 GF* b) X*OR (02 GF* c) X*OR (02 GF* d)).
+Proof.
+  intros a b c d.
+  unfold "02 GF* s".
+  rewrite xtime_distr.
+  rewrite xtime_distr.
+  rewrite xtime_distr.
+  reflexivity.
+Qed.
+
+Theorem distr_gf_03: forall a b: byte,
+    (03 GF* (a X*OR b)) = ((03 GF* a) X*OR (03 GF* b)).
+Proof.
+  intros a b.
+  unfold "03 GF* s".
+  rewrite distr_gf_02.
+  pose proof (xor_bytes_assoc ((02 GF* a) X*OR a) (02 GF* b) b).
+  rewrite H.
+  rewrite xor_bytes_noorder.
+  pose proof (xor_bytes_assoc ((02 GF* a) X*OR (02 GF* b)) a  b).
+  rewrite H0.
+  reflexivity.
+Qed.  
+ *)
+Theorem distr_gf_09_four: forall a b c d: byte,
+    (09 GF* (a X*OR b X*OR c X*OR d)) = ((09 GF* a) X*OR (09 GF* b) X*OR (09 GF* c) X*OR (09 GF* d)).
+Proof.
+Admitted.
+
+Theorem distr_gf_0b_four: forall a b c d: byte,
+    (0b GF* (a X*OR b X*OR c X*OR d)) = ((0b GF* a) X*OR (0b GF* b) X*OR (0b GF* c) X*OR (0b GF* d)).
+Proof.
+Admitted.
+
+Theorem distr_gf_0d_four: forall a b c d: byte,
+    (0d GF* (a X*OR b X*OR c X*OR d)) = ((0d GF* a) X*OR (0d GF* b) X*OR (0d GF* c) X*OR (0d GF* d)).
+Proof.
+Admitted.
+
+Theorem distr_gf_0e_four: forall a b c d: byte,
+    (0e GF* (a X*OR b X*OR c X*OR d)) = ((0e GF* a) X*OR (0e GF* b) X*OR (0e GF* c) X*OR (0e GF* d)).
+Proof.
+Admitted.
+
+Theorem consolidate_16_xor_bytes: forall a0 a1 a2 a3 b0 b1 b2 b3 c0 c1 c2 c3 d0 d1 d2 d3: byte,
+    ((((a0 X*OR b0 X*OR c0 X*OR d0) X*OR (a1 X*OR b1 X*OR c1 X*OR d1))
+        X*OR (a2 X*OR b2 X*OR c2 X*OR d2)) X*OR (a3 X*OR b3 X*OR c3 X*OR d3))
+    =
+      ((((a0 X*OR a1 X*OR a2 X*OR a3) X*OR (b0 X*OR b1 X*OR b2 X*OR b3))
+          X*OR (c0 X*OR c1 X*OR c2 X*OR c3)) X*OR (d0 X*OR d1 X*OR d2 X*OR d3)).
+Proof.
+Admitted.
+
+Definition mix_column_transform (column: word): word :=
+  match column with
+  | bytes4 a b c d =>
+      let a':= (02 GF* a) X*OR (03 GF* b) X*OR c X*OR d in
+      let b':= a X*OR (02 GF* b) X*OR (03 GF* c) X*OR d in
+      let c':= a X*OR b X*OR (02 GF* c) X*OR (03 GF* d) in
+      let d':= (03 GF* a) X*OR b X*OR c X*OR (02 GF* d) in
+      bytes4 a' b' c' d'
+  end.
+
+Definition inv_mix_column_transform (column: word): word :=
+  match column with
+  | bytes4 a' b' c' d' =>
+      let a'':= (0e GF* a') X*OR (0b GF* b') X*OR (0d GF* c') X*OR (09 GF* d') in
+      let b'':= (09 GF* a') X*OR (0e GF* b') X*OR (0b GF* c') X*OR (0d GF* d') in
+      let c'':= (0d GF* a') X*OR (09 GF* b') X*OR (0e GF* c') X*OR (0b GF* d') in
+      let d'':= (0b GF* a') X*OR (0d GF* b') X*OR (09 GF* c') X*OR (0e GF* d') in
+      bytes4 a'' b'' c'' d''
+  end.
+
+Definition columns_to_matrix (c0 c1 c2 c3: word): matrix :=
+  match c0 with
+  | bytes4 c00 c10 c20 c30 =>
+      match c1 with
+      | bytes4 c01 c11 c21 c31 =>
+          match c2 with
+          | bytes4 c02 c12 c22 c32 =>
+              match c3 with
+              | bytes4 c03 c13 c23 c33 =>
+                  bytes16 c00 c01 c02 c03
+                          c10 c11 c12 c13
+                          c20 c21 c22 c23
+                          c30 c31 c32 c33
+              end
+          end
+      end
+  end.
+
+
+Definition mix_columns_qw (state: qword): qword :=
+  match state with
+  | words4 w0 w1 w2 w3 => words4 (mix_column_transform w0) (mix_column_transform w1) (mix_column_transform w2) (mix_column_transform w3)
+  end.
+
+Definition inv_mix_columns_qw (state: qword): qword :=
+  match state with
+  | words4 w0 w1 w2 w3 => words4 (inv_mix_column_transform w0) (inv_mix_column_transform w1) (inv_mix_column_transform w2) (inv_mix_column_transform w3)
+  end.
+
+Theorem mc_inv_mc_qw: forall s: qword,
+    inv_mix_columns_qw (mix_columns_qw s) = s.
+Proof.
+  intros s. destruct s.
+  unfold mix_columns_qw. unfold inv_mix_columns_qw.
+  rewrite mct_inv_mct.
+  rewrite mct_inv_mct.
+  rewrite mct_inv_mct.
+  rewrite mct_inv_mct.
+  reflexivity.
+Qed.
+
+
 Definition mix_columns (state: matrix) : matrix :=
-  state.
+  match state with
+  | bytes16 s00 s01 s02 s03
+            s10 s11 s12 s13
+            s20 s21 s22 s23
+            s30 s31 s32 s33 => let ncol0 := (mix_column_transform (bytes4 s00 s10 s20 s30))
+                               in
+                               let ncol1 := (mix_column_transform (bytes4 s01 s11 s21 s31))
+                               in
+                               let ncol2 := (mix_column_transform (bytes4 s02 s12 s22 s32))
+                               in
+                               let ncol3 := (mix_column_transform (bytes4 s03 s13 s23 s33))
+                               in
+                               columns_to_matrix ncol0 ncol1 ncol2 ncol3
+  end.
 
 Definition inv_mix_columns (state: matrix) : matrix :=
-  state.
+  match state with
+  | bytes16 s00 s01 s02 s03
+            s10 s11 s12 s13
+            s20 s21 s22 s23
+            s30 s31 s32 s33 => let ncol0 := (inv_mix_column_transform (bytes4 s00 s10 s20 s30))
+                               in
+                               let ncol1 := (inv_mix_column_transform (bytes4 s01 s11 s21 s31))
+                               in
+                               let ncol2 := (inv_mix_column_transform (bytes4 s02 s12 s22 s32))
+                               in
+                               let ncol3 := (inv_mix_column_transform (bytes4 s03 s13 s23 s33))
+                               in
+                               columns_to_matrix ncol0 ncol1 ncol2 ncol3
+  end.
 
 Theorem mc_inv_mc: forall state: matrix,
     inv_mix_columns (mix_columns (state)) = state.
 Proof.
-Admitted.
+  intros state.
+  unfold mix_columns.
+  unfold inv_mix_columns.
+  destruct state. simpl.
 
-(*TODO: round keys*)
+  pose proof (distr_gf_0e_four (02 GF* r0c0) (03 GF* r1c0) r2c0 r3c0).
+  pose proof (distr_gf_0b_four r0c0 (02 GF* r1c0) (03 GF* r2c0) r3c0).
+  pose proof (distr_gf_0d_four r0c0 r1c0 (02 GF* r2c0) (03 GF* r3c0)).
+  pose proof (distr_gf_09_four (03 GF* r0c0) r1c0 r2c0 (02 GF* r3c0)).
+  rewrite H. rewrite H0. rewrite H1. rewrite H2.
+  rewrite consolidate_16_xor_bytes.
+  rewrite a''_a_eq_a. rewrite a''_b_eq_zb. rewrite a''_c_eq_zb.
+  rewrite a''_d_eq_zb. rewrite xor_bytes_comm. rewrite xor_byte_zb.
+  rewrite xor_bytes_comm. rewrite xor_byte_zb. rewrite xor_bytes_comm.
+  rewrite xor_byte_zb.
+
+  pose proof (distr_gf_0e_four (02 GF* r0c1) (03 GF* r1c1) r2c1 r3c1).
+  pose proof (distr_gf_0b_four r0c1 (02 GF* r1c1) (03 GF* r2c1) r3c1).
+  pose proof (distr_gf_0d_four r0c1 r1c1 (02 GF* r2c1) (03 GF* r3c1)).
+  pose proof (distr_gf_09_four (03 GF* r0c1) r1c1 r2c1 (02 GF* r3c1)).
+  rewrite H3. rewrite H4. rewrite H5. rewrite H6.
+  rewrite consolidate_16_xor_bytes.
+  rewrite a''_a_eq_a. rewrite a''_b_eq_zb. rewrite a''_c_eq_zb.
+  rewrite a''_d_eq_zb. rewrite xor_bytes_comm. rewrite xor_byte_zb.
+  rewrite xor_bytes_comm. rewrite xor_byte_zb. rewrite xor_bytes_comm.
+  rewrite xor_byte_zb.
+  
+  pose proof (distr_gf_0e_four (02 GF* r0c2) (03 GF* r1c2) r2c2 r3c2).
+  pose proof (distr_gf_0b_four r0c2 (02 GF* r1c2) (03 GF* r2c2) r3c2).
+  pose proof (distr_gf_0d_four r0c2 r1c2 (02 GF* r2c2) (03 GF* r3c2)).
+  pose proof (distr_gf_09_four (03 GF* r0c2) r1c2 r2c2 (02 GF* r3c2)).
+  rewrite H7. rewrite H8. rewrite H9. rewrite H10.
+  rewrite consolidate_16_xor_bytes.
+  rewrite a''_a_eq_a. rewrite a''_b_eq_zb. rewrite a''_c_eq_zb.
+  rewrite a''_d_eq_zb. rewrite xor_bytes_comm. rewrite xor_byte_zb.
+  rewrite xor_bytes_comm. rewrite xor_byte_zb. rewrite xor_bytes_comm.
+  rewrite xor_byte_zb.
+
+  pose proof (distr_gf_0e_four (02 GF* r0c3) (03 GF* r1c3) r2c3 r3c3).
+  pose proof (distr_gf_0b_four r0c3 (02 GF* r1c3) (03 GF* r2c3) r3c3).
+  pose proof (distr_gf_0d_four r0c3 r1c3 (02 GF* r2c3) (03 GF* r3c3)).
+  pose proof (distr_gf_09_four (03 GF* r0c3) r1c3 r2c3 (02 GF* r3c3)).
+  rewrite H11. rewrite H12. rewrite H13. rewrite H14.
+  rewrite consolidate_16_xor_bytes.
+  rewrite a''_a_eq_a. rewrite a''_b_eq_zb. rewrite a''_c_eq_zb.
+  rewrite a''_d_eq_zb. rewrite xor_bytes_comm. rewrite xor_byte_zb.
+  rewrite xor_bytes_comm. rewrite xor_byte_zb. rewrite xor_bytes_comm.
+  rewrite xor_byte_zb.
+
+  pose proof (distr_gf_09_four (02 GF* r0c0) (03 GF* r1c0) r2c0 r3c0).
+  pose proof (distr_gf_0e_four r0c0 (02 GF* r1c0) (03 GF* r2c0) r3c0).
+  pose proof (distr_gf_0b_four r0c0 r1c0 (02 GF* r2c0) (03 GF* r3c0)).
+  pose proof (distr_gf_0d_four (03 GF* r0c0) r1c0 r2c0 (02 GF* r3c0)).
+  rewrite H15. rewrite H16. rewrite H17. rewrite H18.
+  rewrite consolidate_16_xor_bytes.
+  rewrite b''_a_eq_zb. rewrite b''_b_eq_b. rewrite b''_c_eq_zb.
+  rewrite b''_d_eq_zb. rewrite xor_byte_zb.
+  rewrite xor_bytes_comm. rewrite xor_byte_zb.
+  rewrite xor_bytes_comm. rewrite xor_byte_zb. 
+
+  pose proof (distr_gf_09_four (02 GF* r0c1) (03 GF* r1c1) r2c1 r3c1).
+  pose proof (distr_gf_0e_four r0c1 (02 GF* r1c1) (03 GF* r2c1) r3c1).
+  pose proof (distr_gf_0b_four r0c1 r1c1 (02 GF* r2c1) (03 GF* r3c1)).
+  pose proof (distr_gf_0d_four (03 GF* r0c1) r1c1 r2c1 (02 GF* r3c1)).
+  rewrite H19. rewrite H20. rewrite H21. rewrite H22.
+  rewrite consolidate_16_xor_bytes.
+  rewrite b''_a_eq_zb. rewrite b''_b_eq_b. rewrite b''_c_eq_zb.
+  rewrite b''_d_eq_zb. rewrite xor_byte_zb.
+  rewrite xor_bytes_comm. rewrite xor_byte_zb.
+  rewrite xor_bytes_comm. rewrite xor_byte_zb. 
+
+  pose proof (distr_gf_09_four (02 GF* r0c2) (03 GF* r1c2) r2c2 r3c2).
+  pose proof (distr_gf_0e_four r0c2 (02 GF* r1c2) (03 GF* r2c2) r3c2).
+  pose proof (distr_gf_0b_four r0c2 r1c2 (02 GF* r2c2) (03 GF* r3c2)).
+  pose proof (distr_gf_0d_four (03 GF* r0c2) r1c2 r2c2 (02 GF* r3c2)).
+  rewrite H23. rewrite H24. rewrite H25. rewrite H26.
+  rewrite consolidate_16_xor_bytes.
+  rewrite b''_a_eq_zb. rewrite b''_b_eq_b. rewrite b''_c_eq_zb.
+  rewrite b''_d_eq_zb. rewrite xor_byte_zb.
+  rewrite xor_bytes_comm. rewrite xor_byte_zb.
+  rewrite xor_bytes_comm. rewrite xor_byte_zb. 
+
+  pose proof (distr_gf_09_four (02 GF* r0c3) (03 GF* r1c3) r2c3 r3c3).
+  pose proof (distr_gf_0e_four r0c3 (02 GF* r1c3) (03 GF* r2c3) r3c3).
+  pose proof (distr_gf_0b_four r0c3 r1c3 (02 GF* r2c3) (03 GF* r3c3)).
+  pose proof (distr_gf_0d_four (03 GF* r0c3) r1c3 r2c3 (02 GF* r3c3)).
+  rewrite H27. rewrite H28. rewrite H29. rewrite H30.
+  rewrite consolidate_16_xor_bytes.
+  rewrite b''_a_eq_zb. rewrite b''_b_eq_b. rewrite b''_c_eq_zb.
+  rewrite b''_d_eq_zb. rewrite xor_byte_zb.
+  rewrite xor_bytes_comm. rewrite xor_byte_zb.
+  rewrite xor_bytes_comm. rewrite xor_byte_zb.
+
+  pose proof (distr_gf_0d_four (02 GF* r0c0) (03 GF* r1c0) r2c0 r3c0).
+  pose proof (distr_gf_09_four r0c0 (02 GF* r1c0) (03 GF* r2c0) r3c0).
+  pose proof (distr_gf_0e_four r0c0 r1c0 (02 GF* r2c0) (03 GF* r3c0)).
+  pose proof (distr_gf_0b_four (03 GF* r0c0) r1c0 r2c0 (02 GF* r3c0)).
+  rewrite H31. rewrite H32. rewrite H33. rewrite H34.
+  rewrite consolidate_16_xor_bytes.
+  rewrite c''_a_eq_zb. rewrite c''_b_eq_zb. rewrite c''_c_eq_c.
+  rewrite c''_d_eq_zb. rewrite xor_byte_zb.
+  rewrite xor_bytes_comm. rewrite xor_byte_zb.
+
+  pose proof (distr_gf_0d_four (02 GF* r0c1) (03 GF* r1c1) r2c1 r3c1).
+  pose proof (distr_gf_09_four r0c1 (02 GF* r1c1) (03 GF* r2c1) r3c1).
+  pose proof (distr_gf_0e_four r0c1 r1c1 (02 GF* r2c1) (03 GF* r3c1)).
+  pose proof (distr_gf_0b_four (03 GF* r0c1) r1c1 r2c1 (02 GF* r3c1)).
+  rewrite H35. rewrite H36. rewrite H37. rewrite H38.
+  rewrite consolidate_16_xor_bytes.
+  rewrite c''_a_eq_zb. rewrite c''_b_eq_zb. rewrite c''_c_eq_c.
+  rewrite c''_d_eq_zb. rewrite xor_byte_zb.
+  rewrite xor_bytes_comm. rewrite xor_byte_zb.
+
+  pose proof (distr_gf_0d_four (02 GF* r0c2) (03 GF* r1c2) r2c2 r3c2).
+  pose proof (distr_gf_09_four r0c2 (02 GF* r1c2) (03 GF* r2c2) r3c2).
+  pose proof (distr_gf_0e_four r0c2 r1c2 (02 GF* r2c2) (03 GF* r3c2)).
+  pose proof (distr_gf_0b_four (03 GF* r0c2) r1c2 r2c2 (02 GF* r3c2)).
+  rewrite H39. rewrite H40. rewrite H41. rewrite H42.
+  rewrite consolidate_16_xor_bytes.
+  rewrite c''_a_eq_zb. rewrite c''_b_eq_zb. rewrite c''_c_eq_c.
+  rewrite c''_d_eq_zb. rewrite xor_byte_zb.
+  rewrite xor_bytes_comm. rewrite xor_byte_zb.
+
+  pose proof (distr_gf_0d_four (02 GF* r0c3) (03 GF* r1c3) r2c3 r3c3).
+  pose proof (distr_gf_09_four r0c3 (02 GF* r1c3) (03 GF* r2c3) r3c3).
+  pose proof (distr_gf_0e_four r0c3 r1c3 (02 GF* r2c3) (03 GF* r3c3)).
+  pose proof (distr_gf_0b_four (03 GF* r0c3) r1c3 r2c3 (02 GF* r3c3)).
+  rewrite H43. rewrite H44. rewrite H45. rewrite H46.
+  rewrite consolidate_16_xor_bytes.
+  rewrite c''_a_eq_zb. rewrite c''_b_eq_zb. rewrite c''_c_eq_c.
+  rewrite c''_d_eq_zb. rewrite xor_byte_zb.
+  rewrite xor_bytes_comm. rewrite xor_byte_zb.
+
+  pose proof (distr_gf_0b_four (02 GF* r0c0) (03 GF* r1c0) r2c0 r3c0).
+  pose proof (distr_gf_0d_four r0c0 (02 GF* r1c0) (03 GF* r2c0) r3c0).
+  pose proof (distr_gf_09_four r0c0 r1c0 (02 GF* r2c0) (03 GF* r3c0)).
+  pose proof (distr_gf_0e_four (03 GF* r0c0) r1c0 r2c0 (02 GF* r3c0)).
+  rewrite H47. rewrite H48. rewrite H49. rewrite H50.
+  rewrite consolidate_16_xor_bytes.
+  rewrite d''_a_eq_zb. rewrite d''_b_eq_zb. rewrite d''_c_eq_zb.
+  rewrite d''_d_eq_d. rewrite xor_byte_zb.
+
+  pose proof (distr_gf_0b_four (02 GF* r0c1) (03 GF* r1c1) r2c1 r3c1).
+  pose proof (distr_gf_0d_four r0c1 (02 GF* r1c1) (03 GF* r2c1) r3c1).
+  pose proof (distr_gf_09_four r0c1 r1c1 (02 GF* r2c1) (03 GF* r3c1)).
+  pose proof (distr_gf_0e_four (03 GF* r0c1) r1c1 r2c1 (02 GF* r3c1)).
+  rewrite H51. rewrite H52. rewrite H53. rewrite H54.
+  rewrite consolidate_16_xor_bytes.
+  rewrite d''_a_eq_zb. rewrite d''_b_eq_zb. rewrite d''_c_eq_zb.
+  rewrite d''_d_eq_d. rewrite xor_byte_zb.
+
+  pose proof (distr_gf_0b_four (02 GF* r0c2) (03 GF* r1c2) r2c2 r3c2).
+  pose proof (distr_gf_0d_four r0c2 (02 GF* r1c2) (03 GF* r2c2) r3c2).
+  pose proof (distr_gf_09_four r0c2 r1c2 (02 GF* r2c2) (03 GF* r3c2)).
+  pose proof (distr_gf_0e_four (03 GF* r0c2) r1c2 r2c2 (02 GF* r3c2)).
+  rewrite H55. rewrite H56. rewrite H57. rewrite H58.
+  rewrite consolidate_16_xor_bytes.
+  rewrite d''_a_eq_zb. rewrite d''_b_eq_zb. rewrite d''_c_eq_zb.
+  rewrite d''_d_eq_d. rewrite xor_byte_zb.
+
+  pose proof (distr_gf_0b_four (02 GF* r0c3) (03 GF* r1c3) r2c3 r3c3).
+  pose proof (distr_gf_0d_four r0c3 (02 GF* r1c3) (03 GF* r2c3) r3c3).
+  pose proof (distr_gf_09_four r0c3 r1c3 (02 GF* r2c3) (03 GF* r3c3)).
+  pose proof (distr_gf_0e_four (03 GF* r0c3) r1c3 r2c3 (02 GF* r3c3)).
+  rewrite H59. rewrite H60. rewrite H61. rewrite H62.
+  rewrite consolidate_16_xor_bytes.
+  rewrite d''_a_eq_zb. rewrite d''_b_eq_zb. rewrite d''_c_eq_zb.
+  rewrite d''_d_eq_d. rewrite xor_byte_zb.
+
+  reflexivity.
+Qed.  
 
 Definition rc (i: round) : byte :=
   match i with
@@ -1833,22 +2050,6 @@ Definition zb: byte :=
   bits8 s0 s0 s0 s0 s0 s0 s0 s0
 .
 
- 
-(*this is the key to be used for AES encryption and decryption*)
-Definition key : matrix :=
-  bytes16 zb zb zb zb
-          zb zb zb zb
-          zb zb zb zb
-          zb zb zb zb
-.
-
-Definition starkey: matrix :=
-  bytes16 zb zb zb zb
-          zb zb zb zb
-          zb zb zb zb
-          zb zb zb zb
-.
-
 
 Definition add_round_key (k: matrix) (state: matrix) :=
   match k with
@@ -1867,6 +2068,11 @@ Definition add_round_key (k: matrix) (state: matrix) :=
                   (xor_bytes k30 s30) (xor_bytes k31 s31) (xor_bytes k32 s32) (xor_bytes k33 s33)
       end
   end.
+
+Definition xor_matrices (m1 m2: matrix) :=
+  add_round_key m1 m2
+.
+
 
 Theorem xor_xor_matrix: forall state state': matrix,
     add_round_key state' (add_round_key state' state) = state.
@@ -1893,159 +2099,141 @@ Proof.
   reflexivity.
 Qed.
 
-Definition key0 :=
-  rk0 key
+Definition key0 (k:matrix) :=
+  rk0 k
 .
 
-Definition key1 :=
-  rk1 key
+Definition key1 (k:matrix) :=
+  rk1 k
 .
 
-Definition key2 :=
-  rk2 key
+Definition key2 (k:matrix) :=
+  rk2 k
 .
 
-Definition key3 :=
-  rk3 key
+Definition key3 (k:matrix) :=
+  rk3 k
 .
 
-Definition key4 :=
-  rk4 key
+Definition key4 (k:matrix) :=
+  rk4 k
 .
 
-Definition key5 :=
-  rk5 key
+Definition key5 (k:matrix) :=
+  rk5 k
 .
 
-Definition key6 :=
-  rk6 key
+Definition key6 (k:matrix) :=
+  rk6 k
 .
 
-Definition key7 :=
-  rk7 key
+Definition key7 (k:matrix) :=
+  rk7 k
 .
 
-Definition key8 :=
-  rk8 key
+Definition key8 (k:matrix) :=
+  rk8 k
 .
 
-Definition key9 :=
-  rk9 key
+Definition key9 (k:matrix) :=
+  rk9 k
 .
 
-Definition key10 :=
-  rk10 key
+Definition key10 (k:matrix) :=
+  rk10 k
 .
 
-Definition enc_round1 (s: matrix) : matrix :=
-  add_round_key key1 (mix_columns (shift_rows (sub_bytes (s))))
+Definition enc_round1 (k s: matrix) : matrix :=
+  add_round_key (key1 k) (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round2 (s: matrix) : matrix :=
-  add_round_key key2 (mix_columns (shift_rows (sub_bytes (s))))
+Definition enc_round2 (k s: matrix) : matrix :=
+  add_round_key (key2 k) (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round3 (s: matrix) : matrix :=
-  add_round_key key3 (mix_columns (shift_rows (sub_bytes (s))))
+Definition enc_round3 (k s: matrix) : matrix :=
+  add_round_key (key3 k) (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round4 (s: matrix) : matrix :=
-  add_round_key key4 (mix_columns (shift_rows (sub_bytes (s))))
+Definition enc_round4 (k s: matrix) : matrix :=
+  add_round_key (key4 k) (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round5 (s: matrix) : matrix :=
-  add_round_key key5 (mix_columns (shift_rows (sub_bytes (s))))
+Definition enc_round5 (k s: matrix) : matrix :=
+  add_round_key (key5 k) (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round6 (s: matrix) : matrix :=
-  add_round_key key6 (mix_columns (shift_rows (sub_bytes (s))))
+Definition enc_round6 (k s: matrix) : matrix :=
+  add_round_key (key6 k) (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round7 (s: matrix) : matrix :=
-  add_round_key key7 (mix_columns (shift_rows (sub_bytes (s))))
+Definition enc_round7 (k s: matrix) : matrix :=
+  add_round_key (key7 k) (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round8 (s: matrix) : matrix :=
-  add_round_key key8 (mix_columns (shift_rows (sub_bytes (s))))
+Definition enc_round8 (k s: matrix) : matrix :=
+  add_round_key (key8 k) (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round9 (s: matrix) : matrix :=
-  add_round_key key9 (mix_columns (shift_rows (sub_bytes (s))))
+Definition enc_round9 (k s: matrix) : matrix :=
+  add_round_key (key9 k) (mix_columns (shift_rows (sub_bytes (s))))
 .
 
-Definition enc_round10 (s: matrix) : matrix :=
-  add_round_key key10 ((shift_rows (sub_bytes (s))))
+Definition enc_round10 (k s: matrix) : matrix :=
+  add_round_key (key10 k) ((shift_rows (sub_bytes (s))))
 .
 
 Definition enc_aes (k m: matrix) : matrix :=
-  enc_round10 (enc_round9 (enc_round8 (enc_round7 (enc_round6 (enc_round5
-  (enc_round4 (enc_round3 (enc_round2 (enc_round1 (add_round_key key0 m)))))))))) 
+  enc_round10 k (enc_round9 k (enc_round8 k (enc_round7 k (enc_round6 k (enc_round5 k 
+  (enc_round4 k (enc_round3 k (enc_round2 k (enc_round1 k (add_round_key (key0 k) m)))))))))) 
 .
 
-Definition message : matrix :=
-  bytes16 zb zb zb zb
-          zb zb zb zb
-          zb zb zb zb
-          zb zb zb zb
+
+Definition dec_round1 (k s: matrix) : matrix :=
+  inv_mix_columns (add_round_key (key9 k) (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Compute enc_aes key message.
-
-Definition cipher : matrix :=
-  bytes16 (bits8 s1 s1 s0 s0 s1 s1 s0 s0) (bits8 s0 s0 s1 s0 s0 s1 s0 s1) (bits8 s0 s1 s1 s0 s0 s0 s0 s1)
-         (bits8 s1 s1 s0 s1 s0 s1 s1 s1) (bits8 s1 s1 s1 s0 s0 s0 s0 s1) (bits8 s0 s1 s0 s1 s1 s1 s0 s1)
-         (bits8 s1 s1 s0 s1 s1 s1 s0 s0) (bits8 s1 s1 s1 s0 s0 s0 s1 s1) (bits8 s0 s1 s1 s1 s1 s0 s1 s1)
-         (bits8 s1 s1 s1 s1 s0 s0 s1 s1) (bits8 s0 s0 s0 s1 s0 s1 s0 s1) (bits8 s0 s1 s0 s1 s1 s1 s1 s0)
-         (bits8 s0 s1 s1 s0 s1 s0 s1 s1) (bits8 s1 s1 s0 s1 s0 s0 s0 s0) (bits8 s0 s1 s1 s1 s1 s0 s0 s0)
-         (bits8 s0 s1 s0 s1 s1 s0 s0 s1)
+Definition dec_round2 (k s: matrix) : matrix :=
+  inv_mix_columns (add_round_key (key8 k) (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round1 (s: matrix) : matrix :=
-  inv_mix_columns (add_round_key key9 (inv_sub_bytes (inv_shift_rows (s))))
+Definition dec_round3 (k s: matrix) : matrix :=
+  inv_mix_columns (add_round_key (key7 k) (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round2 (s: matrix) : matrix :=
-  inv_mix_columns (add_round_key key8 (inv_sub_bytes (inv_shift_rows (s))))
+Definition dec_round4 (k s: matrix) : matrix :=
+  inv_mix_columns (add_round_key (key6 k) (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round3 (s: matrix) : matrix :=
-  inv_mix_columns (add_round_key key7 (inv_sub_bytes (inv_shift_rows (s))))
+Definition dec_round5 (k s: matrix) : matrix :=
+  inv_mix_columns (add_round_key (key5 k) (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round4 (s: matrix) : matrix :=
-  inv_mix_columns (add_round_key key6 (inv_sub_bytes (inv_shift_rows (s))))
+Definition dec_round6 (k s: matrix) : matrix :=
+  inv_mix_columns (add_round_key (key4 k) (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round5 (s: matrix) : matrix :=
-  inv_mix_columns (add_round_key key5 (inv_sub_bytes (inv_shift_rows (s))))
+Definition dec_round7 (k s: matrix) : matrix :=
+  inv_mix_columns (add_round_key (key3 k) (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round6 (s: matrix) : matrix :=
-  inv_mix_columns (add_round_key key4 (inv_sub_bytes (inv_shift_rows (s))))
+Definition dec_round8 (k s: matrix) : matrix :=
+  inv_mix_columns (add_round_key (key2 k) (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round7 (s: matrix) : matrix :=
-  inv_mix_columns (add_round_key key3 (inv_sub_bytes (inv_shift_rows (s))))
+Definition dec_round9 (k s: matrix) : matrix :=
+  inv_mix_columns (add_round_key (key1 k) (inv_sub_bytes (inv_shift_rows (s))))
 .
 
-Definition dec_round8 (s: matrix) : matrix :=
-  inv_mix_columns (add_round_key key2 (inv_sub_bytes (inv_shift_rows (s))))
-.
-
-Definition dec_round9 (s: matrix) : matrix :=
-  inv_mix_columns (add_round_key key1 (inv_sub_bytes (inv_shift_rows (s))))
-.
-
-Definition dec_round10 (s: matrix) : matrix :=
-  add_round_key key0 (inv_sub_bytes (inv_shift_rows (s)))
+Definition dec_round10 (k s: matrix) : matrix :=
+  add_round_key (key0 k) (inv_sub_bytes (inv_shift_rows (s)))
 .
 
 Definition dec_aes (k c: matrix) : matrix :=
-  dec_round10 (dec_round9 (dec_round8 (dec_round7 (dec_round6 (dec_round5
-  (dec_round4 (dec_round3 (dec_round2 (dec_round1 (add_round_key key10 c))))))))))
+  dec_round10 k (dec_round9 k (dec_round8 k (dec_round7 k (dec_round6 k (dec_round5 k
+  (dec_round4 k (dec_round3 k (dec_round2 k (dec_round1 k (add_round_key (key10 k) c))))))))))
 .
 
-Compute dec_aes key (enc_aes key message).
 
 Theorem aes_correctness: forall k: matrix, forall m: matrix,
     dec_aes k (enc_aes k m) = m.
@@ -2143,4 +2331,28 @@ Proof.
     reflexivity.
 Qed.
 
-    
+Fixpoint enc_aes_cbc (key iv: matrix) (message: blocks): blocks :=
+  match message with
+  | B0 s => B0 (enc_aes key (xor_matrices iv s))
+  | BS s b => let niv:=enc_aes key (xor_matrices iv s) in
+              BS niv (enc_aes_cbc key niv b)
+  end.
+
+Fixpoint dec_aes_cbc (key iv: matrix) (ciphertext: blocks): blocks :=
+  match ciphertext with
+  | B0 s => B0 (xor_matrices iv (dec_aes key s))
+  | BS s b => let d:=dec_aes key s in
+              BS (xor_matrices iv d) (dec_aes_cbc key s b)
+  end.
+ 
+Theorem aes_cbc_correctness: forall key iv: matrix, forall message: blocks,
+    dec_aes_cbc key iv (enc_aes_cbc key iv (message)) = message.
+Proof.
+  intros key iv message. generalize dependent iv.
+  induction message as [|ms mb Hm].
+  - simpl. intros iv. rewrite aes_correctness.
+    rewrite xor_xor_matrix. reflexivity.
+  - simpl. intros iv. rewrite aes_correctness.
+    rewrite xor_xor_matrix.
+    rewrite Hm. reflexivity.
+Qed.
