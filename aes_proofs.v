@@ -2264,5 +2264,15 @@ Proof.
 Qed.
 
 From Coq Require Import Extraction.
-Extraction "extracted/encryption.ml" enc_aes_cbc.
-Extraction "extracted/decryption.ml" dec_aes_cbc.
+
+Extraction Language OCaml.
+Extraction "extracted/OCaml/Encryption.ml" enc_aes_cbc.
+Extraction "extracted/OCaml/Decryption.ml" dec_aes_cbc.
+
+Extraction Language Haskell.
+Extraction "extracted/Haskell/Encryption.hs" enc_aes_cbc.
+Extraction "extracted/Haskell/Decryption.hs" dec_aes_cbc.
+
+Extraction Language Scheme.
+Extraction "extracted/Scheme/Encryption.scm" enc_aes_cbc.
+Extraction "extracted/Scheme/Decryption.scm" dec_aes_cbc.
