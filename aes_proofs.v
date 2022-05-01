@@ -944,21 +944,7 @@ Theorem xor_bits_assoc: forall a b c: bit,
 Proof.
   intros a b c.
   simpl. unfold "x*or".
-  destruct a.
-  - destruct b.
-    + destruct c.
-      ++ reflexivity.
-      ++ reflexivity.
-    + destruct c.
-      ++ reflexivity.
-      ++ reflexivity.
-  - destruct b.
-    + destruct c.
-      ++ reflexivity.
-      ++ reflexivity.
-    + destruct c.
-      ++ reflexivity.
-      ++ reflexivity.
+  destruct a; (destruct b; (destruct c; (reflexivity))).
 Qed.
 
 Theorem xor_bytes_assoc: forall a b c: byte,
@@ -979,21 +965,7 @@ Theorem xor_bits_cancel: forall a b c: bit,
 Proof.
   intros a b c.
   unfold "x*or".
-  destruct c.
-  - destruct a.
-    + destruct b.
-      ++ reflexivity.
-      ++ reflexivity.
-    + destruct b.
-      ++ reflexivity.
-      ++ reflexivity.
-  - destruct a.
-    + destruct b.
-      ++ reflexivity.
-      ++ reflexivity.
-    + destruct b.
-      ++ reflexivity.
-      ++ reflexivity.
+  destruct c; (destruct a; (destruct b; (reflexivity))).
 Qed.
 
 Theorem xor_bytes_cancel: forall a b c: byte,
