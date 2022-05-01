@@ -1481,6 +1481,7 @@ Theorem consolidate_16_xor_bytes: forall a0 a1 a2 a3 b0 b1 b2 b3 c0 c1 c2 c3 d0 
 Proof.
 Admitted.
 
+  
 Definition mix_column_transform (column: word): word :=
   match column with
   | bytes4 a b c d =>
@@ -1500,7 +1501,7 @@ Definition inv_mix_column_transform (column: word): word :=
       let d'':= (0b GF* a') X*OR (0d GF* b') X*OR (09 GF* c') X*OR (0e GF* d') in
       bytes4 a'' b'' c'' d''
   end.
-
+                                            
 Definition columns_to_matrix (c0 c1 c2 c3: word): matrix :=
   match c0 with
   | bytes4 c00 c10 c20 c30 =>
@@ -1529,19 +1530,6 @@ Definition inv_mix_columns_qw (state: qword): qword :=
   match state with
   | words4 w0 w1 w2 w3 => words4 (inv_mix_column_transform w0) (inv_mix_column_transform w1) (inv_mix_column_transform w2) (inv_mix_column_transform w3)
   end.
-
-Theorem mc_inv_mc_qw: forall s: qword,
-    inv_mix_columns_qw (mix_columns_qw s) = s.
-Proof.
-  intros s. destruct s.
-  unfold mix_columns_qw. unfold inv_mix_columns_qw.
-  rewrite mct_inv_mct.
-  rewrite mct_inv_mct.
-  rewrite mct_inv_mct.
-  rewrite mct_inv_mct.
-  reflexivity.
-Qed.
-
 
 Definition mix_columns (state: matrix) : matrix :=
   match state with
@@ -2045,11 +2033,6 @@ Definition rk9 (k : matrix) : matrix :=
 
 Definition rk10 (k : matrix) : matrix :=
   keyt_to_matrix (rk r10 (matrix_to_keyt (rk9 k))).
-
-Definition zb: byte :=
-  bits8 s0 s0 s0 s0 s0 s0 s0 s0
-.
-
 
 Definition add_round_key (k: matrix) (state: matrix) :=
   match k with
