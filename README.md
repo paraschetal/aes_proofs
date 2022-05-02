@@ -1,2 +1,2 @@
-# aes_proofs
-Proofs for AES
+# Proving AES Correct in Coq
+The code in [AES128.v](./AES128.v) proves the cryptographic correctness property for AES-128 block-cipher and two of its modes of operation AES-128-ECB and AES-128-CBC. It also extracts proved-correct AES-128-CBC implementations for [OCaml](https://github.com/paraschetal/aes_proofs/tree/main/extracted/OCaml), [Haskell](https://github.com/paraschetal/aes_proofs/tree/main/extracted/Haskell) and [Scheme](https://github.com/paraschetal/aes_proofs/tree/main/extracted/Scheme).
