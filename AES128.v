@@ -2474,6 +2474,86 @@ Proof.
     rewrite Hm. reflexivity.
 Qed.
 
+Inductive hex : Type :=
+  | Hn
+  | H0 (h : hex)
+  | H1 (h : hex)
+  | H2 (h : hex)
+  | H3 (h : hex)
+  | H4 (h : hex)
+  | H5 (h : hex)
+  | H6 (h : hex)
+  | H7 (h : hex)
+  | H8 (h : hex)
+  | H9 (h : hex)
+  | Ha (h : hex)
+  | Hb (h : hex)
+  | Hc (h : hex)
+  | Hd (h : hex)
+  | He (h : hex)
+  | Hf (h : hex)
+.
+
+Definition hex_to_nibble (h : hex) : nibble:=
+  match h with
+  | H0 h => bits4 s0 s0 s0 s0
+  | H1 h => bits4 s0 s0 s0 s1
+  | H2 h => bits4 s0 s0 s1 s0
+  | H3 h => bits4 s0 s0 s1 s1
+  | H4 h => bits4 s0 s1 s0 s0
+  | H5 h => bits4 s0 s1 s0 s1
+  | H6 h => bits4 s0 s1 s1 s0
+  | H7 h => bits4 s0 s1 s1 s1
+  | H8 h => bits4 s1 s0 s0 s0
+  | H9 h => bits4 s1 s0 s0 s1
+  | Ha h => bits4 s1 s0 s1 s0
+  | Hb h => bits4 s1 s0 s1 s1
+  | Hc h => bits4 s1 s1 s0 s0
+  | Hd h => bits4 s1 s1 s0 s1
+  | He h => bits4 s1 s1 s1 s0
+  | Hf h => bits4 s1 s1 s1 s1
+  | Hn => bits4 s0 s0 s0 s0
+  end.
+
+Definition nibble_to_byte (n1 n2 : nibble) : byte :=
+  match n1,n2 with
+  | bits4 b1 b2 b3 b4, bits4 b5 b6 b7 b8 => bits8 b1 b2 b3 b4 b5 b6 b7 b8
+  end.
+
+Fixpoint hex_length (h : hex) : nat :=
+  match h with
+  | Hn => 0
+  | H0 h => 1 + hex_length(h)
+  | H1 h => 1 + hex_length(h)
+  | H2 h => 1 + hex_length(h)
+  | H3 h => 1 + hex_length(h)
+  | H4 h => 1 + hex_length(h)
+  | H5 h => 1 + hex_length(h)
+  | H6 h => 1 + hex_length(h)
+  | H7 h => 1 + hex_length(h)
+  | H8 h => 1 + hex_length(h)
+  | H9 h => 1 + hex_length(h)
+  | Ha h => 1 + hex_length(h)
+  | Hb h => 1 + hex_length(h)
+  | Hc h => 1 + hex_length(h)
+  | Hd h => 1 + hex_length(h)
+  | He h => 1 + hex_length(h)
+  | Hf h => 1 + hex_length(h)
+  end.
+
+(*
+Definition hex_to_matrix (h : hex) : matrix :=
+  match h with
+  | H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 (H0 h))))))))))))))))))))))))))))))) =>
+    bytes16 (nibble_to_byte (hex_to_nibble H0) (hex_to_nibble H0))
+*)
+
+(*
+Fixpoint hex_to_blocks (h : hex) : blocks :=
+  match hex_length h with
+  | O =>
+*)  
+
 From Coq Require Import Extraction.
 
 Extraction Language OCaml.
