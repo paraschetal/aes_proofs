@@ -21,7 +21,8 @@ type word =
 | Bytes4 of byte * byte * byte * byte
 
 type matrix =
-| Bytes16 of byte * byte * byte * byte * byte * byte * byte * byte * byte * byte * byte * byte * byte * byte * byte * byte
+| Bytes16 of byte * byte * byte * byte * byte * byte * byte * byte * byte * byte * 
+   byte * byte * byte * byte * byte * byte
 
 val s_box : byte -> byte
 

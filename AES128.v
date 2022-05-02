@@ -2487,3 +2487,4 @@ Extraction "extracted/Haskell/Decryption.hs" dec_aes_cbc.
 Extraction Language Scheme.
 Extraction "extracted/Scheme/Encryption.scm" enc_aes_cbc.
 Extraction "extracted/Scheme/Decryption.scm" dec_aes_cbc.
+Print All.
